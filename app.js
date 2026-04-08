@@ -874,6 +874,7 @@ window.APP={
   adminStartGame:adminStartGame,
   adminNextRound:adminNextRound,
   adminResetGame:adminResetGame,
+  clearAllTestData:clearAllTestData,
   activatePoll:activatePoll,
   closePollAdmin:closePollAdmin,
   revealPoll:revealPoll,
@@ -892,6 +893,5 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
- renderDashboard:renderDashboard,
-  clearAllTestData:clearAllTestData
+  renderDashboard:renderDashboard
 };

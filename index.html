@@ -13,8 +13,6 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .app-header{background:linear-gradient(135deg,var(--purple-dark),var(--purple) 60%,#5c2a9a);padding:18px 20px 14px;text-align:center;position:relative;overflow:hidden;}
 .app-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:var(--orange);opacity:.1;border-radius:50%;}
 .app-header::after{content:'';position:absolute;bottom:-50px;left:-30px;width:150px;height:150px;background:var(--gold);opacity:.09;border-radius:50%;}
-.hdr-logo{font-family:'Bebas Neue',sans-serif;font-size:38px;color:#fff;letter-spacing:4px;line-height:1;position:relative;z-index:1;}
-.hdr-org{font-size:9px;color:var(--gold-light);letter-spacing:2px;text-transform:uppercase;position:relative;z-index:1;margin-bottom:6px;}
 .hdr-conf{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);letter-spacing:2px;position:relative;z-index:1;}
 .hdr-meta{font-size:10px;color:rgba(255,255,255,.7);margin-top:3px;position:relative;z-index:1;}
 .auth-bar{background:rgba(0,0,0,.25);padding:7px 14px;display:flex;align-items:center;justify-content:space-between;}
@@ -33,6 +31,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .tab-panel{display:none;}
 .tab-panel.active{display:block;}
 .sec{padding:14px;}
+/* SCHEDULE */
 .day-hdr{background:var(--purple);color:#fff;padding:11px 16px;font-family:'Bebas Neue',sans-serif;font-size:19px;letter-spacing:2px;display:flex;align-items:center;gap:8px;}
 .day-badge{background:var(--orange);color:#fff;font-size:9px;font-family:'Barlow Condensed',sans-serif;font-weight:700;padding:2px 7px;border-radius:20px;letter-spacing:1px;text-transform:uppercase;}
 .si{display:flex;gap:10px;padding:12px 16px;border-bottom:1px solid var(--border);cursor:pointer;background:#fff;transition:background .15s;}
@@ -51,6 +50,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .tg-award{background:var(--gold);color:#2d1350;}
 .tg-eve{background:var(--easy);color:#fff;}
 .sarr{color:var(--purple-light);font-size:16px;align-self:center;opacity:.4;}
+/* SESSION MODAL */
 .modal-ov{display:none;position:fixed;inset:0;background:rgba(20,5,40,.88);z-index:200;overflow-y:auto;padding:16px;}
 .modal-ov.open{display:flex;align-items:flex-start;justify-content:center;}
 .modal{background:#fff;border-radius:16px;max-width:480px;width:100%;margin:auto;overflow:hidden;animation:slideUp .25s ease;}
@@ -70,31 +70,22 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .blist{padding-left:15px;margin:6px 0 10px;}
 .blist li{font-size:13px;line-height:1.6;color:#444;margin-bottom:3px;}
 .mcls{width:100%;padding:12px;background:var(--orange);color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
+/* POLL MODAL */
+.poll-modal-ov{display:none;position:fixed;inset:0;background:rgba(20,5,40,.88);z-index:300;overflow-y:auto;padding:16px;}
+.poll-modal-ov.open{display:flex;align-items:flex-start;justify-content:center;}
+.poll-modal{background:var(--off-white);border-radius:16px;max-width:480px;width:100%;margin:auto;overflow:hidden;animation:slideUp .25s ease;}
+.poll-modal-inner{padding:14px;}
+.poll-modal-close{width:100%;padding:13px;background:#888;color:#fff;border:none;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;}
+/* CARDS */
 .card{background:#fff;border-radius:14px;overflow:hidden;margin-bottom:12px;box-shadow:0 2px 12px rgba(74,32,128,.07);}
 .card-hdr{background:linear-gradient(135deg,var(--purple),var(--purple-light));padding:11px 15px;display:flex;align-items:center;gap:8px;}
 .card-hdr .chi{font-size:18px;}
 .card-hdr h3{color:#fff;font-family:'Barlow Condensed',sans-serif;font-size:15px;font-weight:700;letter-spacing:.5px;}
 .card-body{padding:14px 15px;}
+/* TRIVIA */
 .trivia-hero{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:16px;padding:20px 16px;text-align:center;margin-bottom:13px;}
 .trivia-hero h2{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--orange);letter-spacing:3px;}
 .trivia-hero p{color:rgba(255,255,255,.8);font-size:12px;margin-top:5px;line-height:1.5;}
-.admin-toggle{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--gold-light);font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;padding:5px 12px;border-radius:20px;cursor:pointer;margin-top:10px;text-transform:uppercase;}
-.adm-panel{display:none;background:#fff;border-radius:14px;padding:13px;margin-bottom:13px;border:2px solid var(--purple);}
-.adm-panel.open{display:block;}
-.adm-panel h3{font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;color:var(--purple);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;}
-.adm-inp{width:100%;padding:8px 11px;border:1px solid #ccc;border-radius:8px;font-size:13px;margin-bottom:7px;}
-.adm-btn{padding:8px 13px;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
-.adm-primary{background:var(--purple);color:#fff;width:100%;}
-.adm-orange{background:var(--orange);color:#fff;}
-.adm-green{background:var(--easy);color:#fff;}
-.adm-red{background:#d03030;color:#fff;}
-.adm-blue{background:#1a5ca0;color:#fff;}
-.adm-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.adm-status{font-size:12px;padding:7px 11px;border-radius:8px;margin-top:7px;font-weight:600;}
-.adm-info{background:#e8f0fe;color:#1a56c4;}
-.adm-ok{background:#e6f9f0;color:#147a50;}
-.adm-warn{background:#fff3e0;color:#c05000;}
-.sec-hdr{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:4px;}
 .score-leg{display:flex;gap:5px;justify-content:center;margin-bottom:11px;flex-wrap:wrap;}
 .sl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;}
 .sl-e{background:#e6f9f0;color:var(--easy);border:1px solid var(--easy);}
@@ -176,6 +167,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .game-over .trophy{font-size:50px;margin-bottom:9px;}
 .game-over h2{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--orange);letter-spacing:3px;margin-bottom:5px;}
 .final-score{font-family:'Bebas Neue',sans-serif;font-size:54px;color:var(--gold-light);letter-spacing:4px;}
+/* POLLS */
 .poll-banner{background:linear-gradient(135deg,var(--orange),#c96f00);border-radius:14px;padding:14px 16px;margin-bottom:13px;}
 .poll-banner h3{font-family:'Bebas Neue',sans-serif;font-size:20px;color:#fff;letter-spacing:2px;margin-bottom:4px;}
 .poll-banner p{font-size:12px;color:rgba(255,255,255,.85);margin-bottom:12px;}
@@ -197,6 +189,10 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .poll-done{background:#e6f9f0;border-radius:10px;padding:12px;text-align:center;font-size:13px;color:var(--easy);font-weight:600;margin-bottom:11px;}
 .takeaway-item{font-size:11px;color:#444;line-height:1.5;padding:4px 0;border-bottom:1px solid #f0ecf8;font-style:italic;}
 .takeaway-item:last-child{border-bottom:none;}
+.poll-alert{background:linear-gradient(135deg,var(--orange),#c96f00);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.poll-alert-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#fff;}
+.poll-alert-btn{background:#fff;color:var(--orange);border:none;border-radius:20px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+/* COMMUNITY */
 .feed-tabs{display:flex;background:#fff;border-bottom:2px solid var(--border);overflow-x:auto;scrollbar-width:none;}
 .feed-tabs::-webkit-scrollbar{display:none;}
 .feed-tab{flex:1;padding:9px 7px;text-align:center;font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:#aaa;cursor:pointer;border:none;background:none;border-bottom:3px solid transparent;transition:all .2s;}
@@ -229,6 +225,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .reply-inp:focus{outline:none;border-color:var(--purple);}
 .reply-sub{background:var(--purple);color:#fff;border:none;border-radius:8px;padding:6px 11px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;}
 .feed-empty{text-align:center;padding:28px 18px;color:#aaa;font-size:12px;font-style:italic;}
+/* CONNECT */
 .biz-card{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:14px;padding:16px;color:#fff;margin-bottom:13px;position:relative;overflow:hidden;}
 .biz-card::after{content:'';position:absolute;bottom:-20px;right:-20px;width:90px;height:90px;background:var(--orange);opacity:.15;border-radius:50%;}
 .biz-animal{font-size:28px;margin-bottom:7px;}
@@ -254,6 +251,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .conn-act{flex:1;padding:9px;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;}
 .dl-btn{background:var(--purple);color:#fff;}
 .em-btn{background:var(--orange);color:#fff;}
+/* HUNT */
 .hunt-hero{background:linear-gradient(135deg,#1a5c3a,#2d8a5e);border-radius:16px;padding:18px 16px;text-align:center;margin-bottom:13px;}
 .hunt-hero h2{font-family:'Bebas Neue',sans-serif;font-size:26px;color:#fff;letter-spacing:3px;}
 .hunt-hero p{color:rgba(255,255,255,.8);font-size:12px;margin-top:4px;}
@@ -276,6 +274,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .gal-item img{width:100%;height:100%;object-fit:cover;}
 .gal-lbl{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:5px 7px;}
 .gal-name{font-size:9px;color:#fff;font-weight:700;}
+/* DASHBOARD */
 .dash-stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:13px;}
 .dash-stat-sm{background:#fff;border-radius:12px;padding:12px;box-shadow:0 2px 8px rgba(74,32,128,.06);text-align:center;}
 .dash-stat-sm .dsv{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--purple);letter-spacing:1px;}
@@ -285,61 +284,49 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .emoji-bar{display:flex;gap:5px;margin-bottom:7px;flex-wrap:wrap;}
 .emoji-stat{background:var(--gray);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;color:var(--text);}
 .emoji-stat.top{background:#e8e0f4;color:var(--purple);}
-.info-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:1px solid #eee;font-size:12px;}
-.info-row:last-child{border-bottom:none;padding-bottom:0;}
-.ir-lbl{color:#888;min-width:75px;}
-.ir-val{font-weight:600;color:var(--text);text-align:right;flex:1;padding-left:7px;}
+/* INFO */
 .wifi-banner{background:linear-gradient(135deg,var(--purple-dark),var(--purple));border-radius:14px;padding:15px;text-align:center;margin-bottom:13px;}
 .wifi-lbl{font-family:'Barlow Condensed',sans-serif;font-size:11px;font-weight:700;color:var(--gold-light);letter-spacing:2px;text-transform:uppercase;margin-bottom:5px;}
 .wifi-pw{font-family:'Bebas Neue',sans-serif;font-size:30px;color:#fff;letter-spacing:4px;}
 .s-chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px;}
 .s-chip{background:var(--gray);border:1px solid #d5c8f0;border-radius:8px;padding:4px 9px;font-size:10px;font-weight:700;color:var(--purple);}
 .s-chip.gold{background:#fff8e6;border-color:var(--gold);color:#7a5a00;}
+/* ADMIN - discreet at bottom of Info */
+.admin-section{margin-top:24px;padding-top:14px;border-top:1px solid var(--border);}
+.staff-toggle{display:block;width:100%;text-align:center;font-size:11px;color:#bbb;cursor:pointer;padding:4px;background:none;border:none;font-family:'Barlow',sans-serif;}
+.staff-toggle:hover{color:#999;}
+.adm-btn{padding:8px 13px;border:none;border-radius:8px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;cursor:pointer;}
+.adm-primary{background:var(--purple);color:#fff;width:100%;}
+.adm-orange{background:var(--orange);color:#fff;}
+.adm-green{background:var(--easy);color:#fff;}
+.adm-red{background:#d03030;color:#fff;}
+.adm-blue{background:#1a5ca0;color:#fff;}
+.adm-row{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
+.adm-status{font-size:12px;padding:7px 11px;border-radius:8px;margin-top:7px;font-weight:600;}
+.adm-info{background:#e8f0fe;color:#1a56c4;}
+.adm-ok{background:#e6f9f0;color:#147a50;}
+.adm-warn{background:#fff3e0;color:#c05000;}
+.sec-hdr{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;margin-top:12px;}
+.admin-unlock-row{display:flex;gap:8px;align-items:center;margin-top:10px;}
+.admin-unlock-row input{flex:1;padding:8px 11px;border:1px solid var(--border);border-radius:8px;font-size:13px;font-family:'Barlow',sans-serif;}
+/* TOAST */
 .toast{position:fixed;bottom:70px;left:50%;transform:translateX(-50%);background:var(--purple);color:#fff;padding:9px 18px;border-radius:20px;font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;z-index:999;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
 .toast.show{opacity:1;}
-.poll-alert{background:linear-gradient(135deg,var(--orange),#c96f00);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
-.poll-alert-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#fff;}
-.poll-alert-btn{background:#fff;color:var(--orange);border:none;border-radius:20px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
-  /* SPONSOR SLIDER STYLES */
-.sponsor-slider {
-  overflow: hidden;
-  background-color: #ffffff;
-  padding: 12px 0;
-  border-top: 2px solid #f0ecf8;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  position: relative;
-  z-index: 10;
-}
-
-.sponsor-track {
-  display: flex;
-  align-items: center;
-  gap: 40px; 
-  width: max-content;
-  animation: scrollSponsors 25s linear infinite; 
-}
-
-.sponsor-track img {
-  height: 35px; 
-  width: auto;
-  object-fit: contain;
-  opacity: 0.9;
-}
-
-@keyframes scrollSponsors {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); } 
-}
+/* SPONSOR SLIDER */
+.sponsor-slider{overflow:hidden;background-color:#fff;padding:12px 0;border-top:2px solid #f0ecf8;width:100%;display:flex;align-items:center;}
+.sponsor-track{display:flex;align-items:center;gap:40px;width:max-content;animation:scrollSponsors 25s linear infinite;}
+.sponsor-track img{height:35px;width:auto;object-fit:contain;opacity:.9;}
+@keyframes scrollSponsors{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 </style>
 </head>
 <body>
+
 <header class="app-header">
-  <img src="kahcc_White_logo.png" alt="KAHCC Logo" style="height: 70px; width: auto; object-fit: contain; margin-bottom: 8px;" />
+  <img src="kahcc_White_logo.png" alt="KAHCC Logo" style="height:70px;width:auto;object-fit:contain;margin-bottom:8px;position:relative;z-index:1;" />
   <div class="hdr-conf">Innovation Spring Conference 2026</div>
   <div class="hdr-meta">April 23-24 &nbsp;&bull;&nbsp; Rolling Hills Zoo &nbsp;&bull;&nbsp; Salina, KS</div>
 </header>
+
 <div class="auth-bar">
   <div class="auth-user" id="authUser" style="display:none;">
     <div class="auth-avatar" id="authAvatar"></div>
@@ -348,6 +335,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
   <div id="authOut"><button class="auth-btn" onclick="APP.signIn()">&#128100; Sign In with Google</button></div>
   <button class="auth-btn out" id="signOutBtn" style="display:none;" onclick="APP.signOut()">Sign Out</button>
 </div>
+
 <nav class="nav-tabs">
   <button class="nav-tab active" onclick="APP.switchTab('schedule')"><span class="ti">&#128197;</span>Schedule</button>
   <button class="nav-tab" onclick="APP.switchTab('trivia')"><span class="ti">&#127942;</span>Trivia</button>
@@ -356,7 +344,10 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
   <button class="nav-tab" onclick="APP.switchTab('connect')"><span class="ti">&#129419;</span>Connect</button>
   <button class="nav-tab" onclick="APP.switchTab('info')"><span class="ti">&#8505;</span>Info</button>
 </nav>
+
 <div class="content">
+
+<!-- SCHEDULE -->
 <div id="tab-schedule" class="tab-panel active">
   <div id="activePollBanner"></div>
   <div class="day-hdr">Thursday, April 23 <span class="day-badge">Day 1</span></div>
@@ -379,47 +370,22 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
   <div class="si brk"><div class="st">12:00-12:15pm</div><div class="sb2"><div class="stitle" style="color:#888;font-weight:600;">Break</div></div></div>
   <div class="si spl" onclick="APP.openModal('emerald')"><div class="st">12:15-2:00pm</div><div class="sb2"><div class="stitle">Emerald Awards &amp; Luncheon</div><div class="ssub">Sponsored by Onspire Health Marketing</div><span class="stag tg-award">&#128081; Awards</span></div><div class="sarr">&#8250;</div></div>
 </div>
+
+<!-- TRIVIA -->
 <div id="tab-trivia" class="tab-panel">
   <div class="sec">
     <div class="trivia-hero">
       <h2>&#128062; Trivia Trek</h2>
       <p>6 rounds &bull; 3 questions each &bull; Every 15 min &bull; Speed earns bonus pts!</p>
-      <button class="admin-toggle" onclick="APP.toggleAdm()">&#9881; Admin</button>
-    </div>
-    <div id="adminPanel" class="adm-panel">
-      <h3>&#9881; Admin Controls</h3>
-      <div id="adminLock">
-        <input type="password" class="adm-inp" id="adminPassInput" placeholder="Admin password..." />
-        <button class="adm-btn adm-primary" onclick="APP.unlockAdmin()">Unlock</button>
-      </div>
-      <div id="adminControls" style="display:none;">
-        <div id="adminStatus" class="adm-status adm-info">Game not started.</div>
-        <div class="adm-row" style="margin-top:8px;">
-          <button class="adm-btn adm-orange" onclick="APP.adminStartGame()">&#9654; Start</button>
-          <button class="adm-btn adm-orange" onclick="APP.adminNextRound()">&#9193; Next Round</button>
-          <button class="adm-btn adm-red" onclick="APP.adminResetGame()">&#8635; Reset</button>
-        </div>
-        <div id="adminHuntApproval" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
-  </div>
-        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
-          <div class="sec-hdr">Session Polls</div>
-          <div id="pollControls"></div>
-        </div>
-        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
-          <div class="sec-hdr">Board Report</div>
-          <div class="adm-row">
-            <button class="adm-btn adm-blue" onclick="APP.switchTab('dashboard')">&#128202; Dashboard</button>
-            <button class="adm-btn adm-green" onclick="APP.exportPDF()">&#128196; Export PDF</button>
-          </div>
-        </div>
-      </div>
     </div>
     <div id="triviaGame"></div>
   </div>
 </div>
+
+<!-- HUNT -->
 <div id="tab-hunt" class="tab-panel">
   <div class="sec">
-    <div class="hunt-hero"><h2>&#128247;AI-nimal Selfie Contest</h2><p>Complete challenges, snap photos, earn points!</p></div>
+    <div class="hunt-hero"><h2>&#128247; AI-nimal Selfie Contest</h2><p>Complete challenges, snap photos, earn points!</p></div>
     <div class="hunt-prog">
       <div class="hp-lbl"><span>Your Progress</span><span id="huntPtsLbl">0 pts</span></div>
       <div class="hp-bar"><div class="hp-fill" id="huntBar" style="width:0%"></div></div>
@@ -431,6 +397,8 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
     </div>
   </div>
 </div>
+
+<!-- COMMUNITY -->
 <div id="tab-community" class="tab-panel">
   <div class="feed-tabs">
     <button class="feed-tab active" onclick="APP.switchFeed('general')">&#127757; General</button>
@@ -445,6 +413,8 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
     <div id="feedPosts"></div>
   </div>
 </div>
+
+<!-- CONNECT -->
 <div id="tab-connect" class="tab-panel">
   <div class="sec">
     <div class="card">
@@ -479,6 +449,8 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
     </div>
   </div>
 </div>
+
+<!-- DASHBOARD -->
 <div id="tab-dashboard" class="tab-panel">
   <div class="sec">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;">
@@ -488,6 +460,8 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
     <div id="dashContent"><div class="feed-empty">Loading...</div></div>
   </div>
 </div>
+
+<!-- INFO -->
 <div id="tab-info" class="tab-panel">
   <div class="sec">
     <div class="wifi-banner">
@@ -495,70 +469,33 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
       <div class="wifi-pw">[ASK VENUE]</div>
       <div style="font-size:10px;color:rgba(255,255,255,.6);margin-top:3px;">Rolling Hills Zoo Guest Network</div>
     </div>
-   <div class="card" style="margin-top: 15px;">
-  <div class="card-hdr">
-    <span class="chi">📍</span>
-    <h3>Venue & Directions</h3>
-  </div>
-  <div class="card-body" style="text-align: center;">
-    <h4 style="color: var(--purple); margin-bottom: 5px; font-size: 18px;">Rolling Hills Zoo</h4>
-    <p style="font-size: 13px; color: #666; margin-bottom: 15px;">625 N Hedville Rd, Salina, KS 67401</p>
-    
-    <img src="rhzparking.jpg" alt="Parking and Entrance Map" style="width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 10px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);" />
-    <p style="font-size: 13px; color: var(--purple); font-weight: bold; margin-bottom: 20px;">Park in the main lot and follow the green arrows to enter near the Wildlife Museum.</p>
-
-    <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-      
-      <a href="https://www.google.com/maps/search/?api=1&query=Rolling+Hills+Zoo,+Salina,+KS" target="_blank" style="text-decoration: none; padding: 10px 15px; background: #4285F4; color: white; border-radius: 6px; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-        🗺️ Google Maps
-      </a>
-      
-      <a href="https://maps.apple.com/?q=Rolling+Hills+Zoo,+Salina,+KS" target="_blank" style="text-decoration: none; padding: 10px 15px; background: #000000; color: white; border-radius: 6px; font-weight: bold; font-size: 13px; display: flex; align-items: center; gap: 5px;">
-        🍎 Apple Maps
-      </a>
-      
+    <div class="card" style="margin-top:15px;">
+      <div class="card-hdr"><span class="chi">&#128205;</span><h3>Venue &amp; Directions</h3></div>
+      <div class="card-body" style="text-align:center;">
+        <h4 style="color:var(--purple);margin-bottom:5px;font-size:18px;">Rolling Hills Zoo</h4>
+        <p style="font-size:13px;color:#666;margin-bottom:15px;">625 N Hedville Rd, Salina, KS 67401</p>
+        <img src="rhzparking.jpg" alt="Parking Map" style="width:100%;max-width:400px;border-radius:8px;margin-bottom:10px;box-shadow:0 2px 4px rgba(0,0,0,0.1);" />
+        <p style="font-size:13px;color:var(--purple);font-weight:bold;margin-bottom:20px;">Park in the main lot and follow the green arrows to enter near the Wildlife Museum.</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <a href="https://www.google.com/maps/search/?api=1&query=Rolling+Hills+Zoo,+Salina,+KS" target="_blank" style="text-decoration:none;padding:10px 15px;background:#4285F4;color:white;border-radius:6px;font-weight:bold;font-size:13px;display:flex;align-items:center;gap:5px;">&#128506; Google Maps</a>
+          <a href="https://maps.apple.com/?q=Rolling+Hills+Zoo,+Salina,+KS" target="_blank" style="text-decoration:none;padding:10px 15px;background:#000;color:white;border-radius:6px;font-weight:bold;font-size:13px;display:flex;align-items:center;gap:5px;">&#127822; Apple Maps</a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
-   <div class="card" style="margin-top: 15px;">
-  <div class="card-hdr">
-    <span class="chi">&#127775;</span>
-    <h3>Our Generous Sponsors</h3>
-  </div>
-  <div class="card-body">
-    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 25px; align-items: center; justify-items: center;">
-      
-      <a href="https://myhpm.com/" target="_blank">
-        <img src="HPM%20Logo%202.png" alt="HPM" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://howertonwhite.com/" target="_blank">
-        <img src="HW-Logo-Vertical-2c.png" alt="HW" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://www.midwestsinglesource.com/" target="_blank">
-        <img src="MSSLOGOFullColor.png" alt="MSS" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://newbostoncreative.com/" target="_blank">
-        <img src="NewBostonLogo_CMYK.png" alt="New Boston" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://onspirehealthmarketing.com/" target="_blank">
-        <img src="Onspire_Horizontal_RGB.png" alt="Onspire" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://jetmarketing.net/" target="_blank">
-        <img src="jet_full_logo_rgb.jpg" alt="Jet" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
-      <a href="https://rater8.com/m" target="_blank">
-        <img src="rater8-Square.png" alt="rater8" style="width: 100%; max-width: 130px; object-fit: contain; transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'" />
-      </a>
-
+    <div class="card" style="margin-top:15px;">
+      <div class="card-hdr"><span class="chi">&#127775;</span><h3>Our Generous Sponsors</h3></div>
+      <div class="card-body">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:25px;align-items:center;justify-items:center;">
+          <a href="https://myhpm.com/" target="_blank"><img src="HPM%20Logo%202.png" alt="HPM" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://howertonwhite.com/" target="_blank"><img src="HW-Logo-Vertical-2c.png" alt="HW" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://www.midwestsinglesource.com/" target="_blank"><img src="MSSLOGOFullColor.png" alt="MSS" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://newbostoncreative.com/" target="_blank"><img src="NewBostonLogo_CMYK.png" alt="New Boston" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://onspirehealthmarketing.com/" target="_blank"><img src="Onspire_Horizontal_RGB.png" alt="Onspire" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://jetmarketing.net/" target="_blank"><img src="jet_full_logo_rgb.jpg" alt="Jet" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+          <a href="https://rater8.com/m" target="_blank"><img src="rater8-Square.png" alt="rater8" style="width:100%;max-width:130px;object-fit:contain;" /></a>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
     <div class="card">
       <div class="card-hdr"><span class="chi">&#128231;</span><h3>Contact</h3></div>
       <div class="card-body" style="font-size:12px;line-height:1.7;color:#444;">
@@ -566,36 +503,67 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
         <p><strong>Talk 20 interest:</strong> Roger Stockman - roger.stockman@rhrjc.org</p>
       </div>
     </div>
+
+    <!-- ADMIN - discreet staff access at very bottom -->
+    <div class="admin-section">
+      <button class="staff-toggle" onclick="APP.toggleAdminSection()">&#9881; Staff Access</button>
+      <div id="adminSectionBody" style="display:none;margin-top:12px;">
+        <div id="adminLock">
+          <div class="admin-unlock-row">
+            <input type="password" id="adminPassInput" placeholder="Staff password..." />
+            <button class="adm-btn adm-primary" onclick="APP.unlockAdmin()">Unlock</button>
+          </div>
+        </div>
+        <div id="adminControls" style="display:none;">
+          <div id="adminStatus" class="adm-status adm-info">Game not started.</div>
+          <div class="sec-hdr">Trivia Game</div>
+          <div class="adm-row">
+            <button class="adm-btn adm-orange" onclick="APP.adminStartGame()">&#9654; Start</button>
+            <button class="adm-btn adm-orange" onclick="APP.adminNextRound()">&#9193; Next Round</button>
+            <button class="adm-btn adm-red" onclick="APP.adminResetGame()">&#8635; Reset</button>
+          </div>
+          <div class="sec-hdr">Session Polls</div>
+          <div id="pollControls"></div>
+          <div id="adminHuntApproval" style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;"></div>
+          <div class="sec-hdr">Board Report</div>
+          <div class="adm-row">
+            <button class="adm-btn adm-blue" onclick="APP.switchTab('dashboard')">&#128202; Dashboard</button>
+            <button class="adm-btn adm-green" onclick="APP.exportPDF()">&#128196; Export PDF</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
-</div>
 </div>
 
-  <div class="sponsor-slider">
+</div><!-- /content -->
+
+<!-- SPONSOR SLIDER -->
+<div class="sponsor-slider">
   <div class="sponsor-track">
-    <img src="HPM%20Logo%202.png" alt="HPM" />
-    <img src="HW-Logo-Vertical-2c.png" alt="HW" />
-    <img src="MSSLOGOFullColor.png" alt="MSS" />
-    <img src="NewBostonLogo_CMYK.png" alt="New Boston" />
-    <img src="Onspire_Horizontal_RGB.png" alt="Onspire" />
-    <img src="jet_full_logo_rgb.jpg" alt="Jet" />
-    <img src="rater8-Square.png" alt="rater8" />
-    
-    <img src="HPM%20Logo%202.png" alt="HPM" />
-    <img src="HW-Logo-Vertical-2c.png" alt="HW" />
-    <img src="MSSLOGOFullColor.png" alt="MSS" />
-    <img src="NewBostonLogo_CMYK.png" alt="New Boston" />
-    <img src="Onspire_Horizontal_RGB.png" alt="Onspire" />
-    <img src="jet_full_logo_rgb.jpg" alt="Jet" />
-    <img src="rater8-Square.png" alt="rater8" />
+    <img src="HPM%20Logo%202.png" alt="HPM" /><img src="HW-Logo-Vertical-2c.png" alt="HW" /><img src="MSSLOGOFullColor.png" alt="MSS" /><img src="NewBostonLogo_CMYK.png" alt="New Boston" /><img src="Onspire_Horizontal_RGB.png" alt="Onspire" /><img src="jet_full_logo_rgb.jpg" alt="Jet" /><img src="rater8-Square.png" alt="rater8" />
+    <img src="HPM%20Logo%202.png" alt="HPM" /><img src="HW-Logo-Vertical-2c.png" alt="HW" /><img src="MSSLOGOFullColor.png" alt="MSS" /><img src="NewBostonLogo_CMYK.png" alt="New Boston" /><img src="Onspire_Horizontal_RGB.png" alt="Onspire" /><img src="jet_full_logo_rgb.jpg" alt="Jet" /><img src="rater8-Square.png" alt="rater8" />
   </div>
 </div>
-  <div id="sessionModal" class="modal-ov" onclick="APP.closeModalOutside(event)">
+
+<!-- SESSION DETAIL MODAL -->
+<div id="sessionModal" class="modal-ov" onclick="APP.closeModalOutside(event)">
   <div class="modal">
     <div class="mhdr"><div class="mtime" id="modalTime"></div><h2 id="modalTitle"></h2><div class="msub" id="modalSub"></div></div>
     <div class="mbody" id="modalBody"></div>
     <button class="mcls" onclick="APP.closeModal()">Close</button>
   </div>
 </div>
+
+<!-- POLL MODAL - overlays on top, stays on current page -->
+<div id="pollModal" class="poll-modal-ov" onclick="APP.closePollModalOutside(event)">
+  <div class="poll-modal">
+    <div class="poll-modal-inner" id="pollModalBody"></div>
+    <button class="poll-modal-close" onclick="APP.closePollModal()">Close</button>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 <script type="module" src="app.js"></script>
 </body>

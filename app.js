@@ -103,6 +103,7 @@ onAuthStateChanged(auth,function(user){
     else av.textContent=(user.displayName||"A")[0].toUpperCase();
     document.getElementById("authName").textContent=user.displayName||"Attendee";
     loadUserData(user);
+    APP.initLiveMap();
   }else{
     document.getElementById("authOut").style.display="block";
     document.getElementById("authUser").style.display="none";
@@ -935,6 +936,62 @@ function exportPDF(){
   });
 }
 
+// --- KANSAS MAP LOGIC ---
+
+APP.submitMyLocation = function() {
+    const town = document.getElementById('attendeeTownInput').value.trim();
+    if (!town) return;
+
+    // A simple coordinate lookup for major KS areas to keep it fast/free
+    // If a town isn't here, it defaults to a random "Central KS" spot
+    const ksCoords = {
+        "wichita": {x: 65, y: 75}, "overland park": {x: 92, y: 35}, 
+        "kansas city": {x: 92, y: 30}, "topeka": {x: 82, y: 32},
+        "lawrence": {x: 87, y: 35}, "salina": {x: 62, y: 38},
+        "manhattan": {x: 75, y: 28}, "hutchinson": {x: 58, y: 68},
+        "dodge city": {x: 28, y: 78}, "garden city": {x: 18, y: 72},
+        "hayes": {x: 38, y: 38}, "colby": {x: 12, y: 25},
+        "pittsburg": {x: 93, y: 85}, "emporia": {x: 78, y: 55},
+        "liberal": {x: 12, y: 92}, "anthony": {x: 55, y: 90}
+    };
+
+    const lookup = town.toLowerCase();
+    let pos = ksCoords[lookup] || { x: 40 + Math.random() * 20, y: 40 + Math.random() * 20 };
+
+    // Save to Firebase
+    const mapRef = window.firebaseDatabase.ref('mapLocations/' + APP.currentUser.uid);
+    mapRef.set({
+        town: town,
+        userName: APP.currentUser.displayName,
+        x: pos.x,
+        y: pos.y,
+        timestamp: Date.now()
+    }).then(() => {
+        document.getElementById('locationInputArea').innerHTML = `<p style="color:var(--easy); font-weight:bold;">📍 Added! See you in Salina!</p>`;
+        APP.showToast("Location added to map!");
+    });
+};
+
+// Listen for all dots in the database
+APP.initLiveMap = function() {
+    const mapLayer = document.getElementById('mapDotLayer');
+    const mapRef = window.firebaseDatabase.ref('mapLocations');
+
+    mapRef.on('value', (snapshot) => {
+        mapLayer.innerHTML = ''; // Clear and redraw
+        const data = snapshot.val();
+        if (!data) return;
+
+        Object.values(data).forEach(loc => {
+            const dot = document.createElement('div');
+            dot.className = 'map-dot';
+            dot.style.left = loc.x + '%';
+            dot.style.top = loc.y + '%';
+            dot.title = `${loc.userName} from ${loc.town}`; // Hover effect
+            mapLayer.appendChild(dot);
+        });
+    });
+};
 window.APP={
   signIn:function(){signInWithPopup(auth,provider).catch(function(e){showToast("Sign in failed: "+e.message);});},
   signOut:function(){signOut(auth);},

@@ -133,7 +133,7 @@ function refresh(){
   if(id==="tab-community")loadFeed(curFeed);
   if(id==="tab-connect"){renderMyCard();renderConnections();}
   if(id==="tab-hunt")renderHunt();
-  if(id==="tab-schedule")checkActivePoll();
+  if(id==="tab-schedule"){checkActivePoll();refreshSchedulePollBadges();}
   if(id==="tab-dashboard")renderDashboard();
 }
 
@@ -149,6 +149,15 @@ function switchTab(name){
   if(name==="hunt")renderHunt();
   if(name==="schedule")checkActivePoll();
   if(name==="dashboard")renderDashboard();
+}
+
+function refreshSchedulePollBadges(){
+  Promise.all(POLLS.map(function(p){return get(ref(db,"revealedPolls/"+p.id));})).then(function(results){
+    POLLS.forEach(function(p,i){
+      var el=document.getElementById("poll-badge-"+p.id);
+      if(el)el.style.display=results[i].val()===true?"inline-block":"none";
+    });
+  });
 }
 
 function openModal(key){
@@ -219,15 +228,7 @@ function toggleAdminSection(){
 function checkActivePoll(){
   get(ref(db,"activePoll")).then(function(snap){
     var el=document.getElementById("activePollBanner");if(!el)return;
-    if(!snap.exists()){
-      // No active poll - show links to any revealed polls
-      var html="";
-      Promise.all(POLLS.map(function(p){return get(ref(db,"revealedPolls/"+p.id));})).then(function(results){
-        POLLS.forEach(function(p,i){if(results[i].val()===true){html+="<div class='poll-alert' style='background:linear-gradient(135deg,var(--purple),var(--purple-light));'><span class='poll-alert-text'>&#128202; Results: "+esc(p.label)+"</span><button class='poll-alert-btn' style='color:var(--purple);' onclick=\"APP.showPoll('"+p.id+"')\">View</button></div>";}});
-        el.innerHTML=html;
-      });
-      return;
-    }
+   if(!snap.exists()){el.innerHTML="";return;}
     var pid=snap.val();var poll=POLLS.find(function(p){return p.id===pid;});if(!poll){el.innerHTML="";return;}
     el.innerHTML="<div class='poll-alert'><span class='poll-alert-text'>&#128203; Rate: "+esc(poll.label)+"</span><button class='poll-alert-btn' onclick=\"APP.showPoll('"+pid+"')\">Rate Now</button></div>";
   });

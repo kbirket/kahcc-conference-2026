@@ -496,6 +496,16 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
       </div>
     </div>
     <div class="card">
+      <div class="card-hdr"><span class="chi">&#128172;</span><h3>Ask the Board</h3></div>
+      <div class="card-body">
+        <div id="questionsList"><div class="feed-empty">Loading questions...</div></div>
+        <div style="margin-top:12px;">
+          <textarea id="questionInput" style="width:100%;border:2px solid var(--border);border-radius:10px;padding:9px 11px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);resize:none;min-height:70px;margin-bottom:9px;" placeholder="Ask the board a question..."></textarea>
+          <button onclick="APP.submitQuestion()" style="width:100%;padding:11px;background:var(--purple);color:#fff;border:none;border-radius:10px;font-family:'Barlow Condensed',sans-serif;font-size:14px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;">&#128172; Submit Question</button>
+        </div>
+      </div>
+    </div>
+    <div class="card">
       <div class="card-hdr"><span class="chi">&#128231;</span><h3>Contact</h3></div>
       <div class="card-body" style="font-size:12px;line-height:1.7;color:#444;">
         <p><strong>Registration:</strong> Jan Fenwick, Kansas Hospital Association, 215 SE 8th Ave., Topeka KS 66603</p>

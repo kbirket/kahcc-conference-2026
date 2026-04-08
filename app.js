@@ -1123,7 +1123,13 @@ function initLiveMap() {
             dot.className = 'map-dot';
             dot.style.left = loc.x + '%';
             dot.style.top = loc.y + '%';
-            dot.title = `${loc.userName} from ${loc.town}`; // Hover effect
+            
+            // Build the custom tooltip
+            const tooltip = document.createElement('div');
+            tooltip.className = 'dot-tooltip';
+            tooltip.innerHTML = `${esc(loc.userName)}<br><span style='color:var(--gold-light); font-weight:normal; font-size:10px;'>${esc(loc.town)}</span>`;
+            
+            dot.appendChild(tooltip);
             mapLayer.appendChild(dot);
         });
     });

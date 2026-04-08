@@ -588,18 +588,21 @@ function uploadProfilePic(input) {
     var file = input.files[0];
     showToast("Uploading photo...");
     
-    // Save to your Firebase Storage
-    var sr = sRef(storage, "profiles/" + CU.uid);
+    // We use the "hunt" folder path since we know Firebase allows uploads here!
+    var sr = sRef(storage, "hunt/" + CU.uid + "_profilepic");
+    
     uploadBytes(sr, file).then(function(s) {
         return getDownloadURL(s.ref);
     }).then(function(url) {
-        // Save the URL to their user profile
+        // Save the custom URL to their user profile
         CUD.photoUrl = url;
         update(ref(db, "users/" + CU.uid), { photoUrl: url });
-        showToast("Photo saved!");
+        showToast("Photo saved successfully!");
         renderMyCard(); // Instantly update the card
     }).catch(function(e) { 
-        showToast("Upload failed: " + e.message); 
+        // This will tell us if Firebase is still blocking it!
+        showToast("Upload blocked: " + e.message); 
+        console.error("Upload error:", e);
     });
 }
 function renderMyCard() {

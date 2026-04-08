@@ -587,9 +587,22 @@ function emailConnections(){
 // HUNT
 function renderHunt(){
   var el=document.getElementById("huntChallenges");if(!el)return;
-  if(!CU){el.innerHTML="<div class='wait-card'><p>Sign in to participate in the scavenger hunt!</p></div>";return;}
+  if(!CU){el.innerHTML="<div class='wait-card'><p>Sign in to participate in the hunt!</p></div>";return;}
+  
   get(ref(db,"hunt/"+CU.uid)).then(function(snap){
-    var mh=snap.val()||{};el.innerHTML="";
+    var mh=snap.val()||{};
+    
+    // 1. Add the new "AI-nimal Selfie" title, Poster, and Guestcam inside the Hunt tab
+    el.innerHTML="<div style='text-align: center; margin-bottom: 25px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);'>" +
+                 "<h2 style='color:var(--purple); margin-bottom:15px; font-size: 24px;'>&#128247; AI-nimal Selfie Contest</h2>" +
+                 "<img src='YOUR_POSTER_IMAGE_URL.jpg' style='width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px;' alt='AI-nimal Museum Selfie Contest' />" +
+                 "<p style='font-size: 14px; color: #555; margin-bottom: 15px;'>Use the Guestcam below to snap your photo and transform into a wild animal. Save the image to your phone, then scroll down to upload it to the challenges below to earn points!</p>" +
+                 // The Guestcam embedded directly inside the tab
+                 "<iframe src='https://guestcam.co/guest/0CMxmfHyNC' style='width: 100%; height: 600px; border: none; border-radius: 8px; background: #f0ecf8;' allow='camera; microphone'></iframe>" +
+                 "</div>" +
+                 "<h3 style='margin: 0 0 15px 0; color: var(--text); font-size: 18px;'>&#128269; Hunt Challenges</h3>";
+                 
+    // 2. Loop through all of your original challenges
     CHALLENGES.forEach(function(ch){
       var sub=mh[ch.id];var div=document.createElement("div");div.className="ch-card";
       var sHTML=sub?(sub.approved?"<div class='ch-approved'>&#9989; Approved! +"+ch.pts+" pts</div>":"<div class='ch-pending'>&#9203; Pending admin approval...</div>"):"<label class='upload-btn' style='display:block;text-align:center;padding:9px;' for='upl_"+ch.id+"'>&#128247; Upload Photo<input type='file' id='upl_"+ch.id+"' accept='image/*' style='display:none;' onchange=\"APP.uploadHunt('"+ch.id+"',this)\" /></label>";

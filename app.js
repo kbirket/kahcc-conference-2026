@@ -1073,72 +1073,86 @@ function exportPDF(){
     showToast("PDF downloaded!");
   });
 }
-// --- KANSAS MAP LOGIC (Attendee Verified) ---
+// --- KANSAS MAP LOGIC (Attendee & Organization Verified) ---
 const KS_TOWNS = {
-  // From your attendee list
-  "salina": {x:58, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
+  // TOWNS
+  "abilene": {x:64, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
   "marion": {x:68, y:52}, "newton": {x:63, y:65}, "osborne": {x:42, y:23},
   "clay center": {x:64, y:28}, "liberal": {x:12, y:93}, "wichita": {x:63, y:75},
   "kingman": {x:52, y:78}, "overland park": {x:95, y:43}, "shawnee": {x:95, y:38},
   "topeka": {x:85, y:33}, "manhattan": {x:72, y:31}, "onaga": {x:79, y:22},
-  "winfield": {x:66, y:88}, "abilene": {x:64, y:38}, "burlington": {x:83, y:62},
-  "belleville": {x:58, y:14}, "plainville": {x:34, y:33}, "sabetha": {x:87, y:12},
-  "smith center": {x:42, y:13}, "kiowa": {x:47, y:93}, "seneca": {x:82, y:14},
-  "girard": {x:96, y:88}, "hays": {x:34, y:38}, "holton": {x:85, y:23},
-  "inman": {x:56, y:58}, "lyons": {x:50, y:58}, "kansas city": {x:96, y:35},
-  // Common backups
-  "hutchinson": {x:55, y:66}, "emporia": {x:76, y:58}, "lawrence": {x:89, y:42},
-  "dodge city": {x:26, y:78}, "garden city": {x:15, y:72}, "colby": {x:12, y:24}
+  "winfield": {x:66, y:88}, "burlington": {x:83, y:62}, "belleville": {x:58, y:14}, 
+  "plainville": {x:34, y:33}, "sabetha": {x:87, y:12}, "smith center": {x:42, y:13}, 
+  "kiowa": {x:47, y:93}, "seneca": {x:82, y:14}, "girard": {x:96, y:88}, 
+  "hays": {x:34, y:38}, "holton": {x:85, y:23}, "inman": {x:56, y:58}, 
+  "lyons": {x:50, y:58}, "kansas city": {x:96, y:35}, "salina": {x:58, y:38},
+
+  // ORGANIZATIONS (Haley-Proofing)
+  "memorial health system": {x:64, y:38}, 
+  "salina regional": {x:58, y:38},
+  "patterson health center": {x:53, y:92},
+  "sck health": {x:68, y:93},
+  "st. luke hospital": {x:68, y:52},
+  "nmc health": {x:63, y:65},
+  "osborne county memorial": {x:42, y:23},
+  "clay county medical": {x:64, y:28},
+  "southwest medical center": {x:12, y:93},
+  "kingman healthcare center": {x:52, y:78},
+  "stormont vail": {x:85, y:33},
+  "new boston creative": {x:72, y:31},
+  "community healthcare system": {x:79, y:22},
+  "william newton": {x:66, y:88},
+  "coffey health system": {x:83, y:62},
+  "republic county hospital": {x:58, y:14},
+  "rooks county": {x:34, y:33},
+  "sabetha community": {x:87, y:12},
+  "smith county memorial": {x:42, y:13},
+  "kiowa district": {x:47, y:93},
+  "kansas hospital association": {x:85, y:33},
+  "nemaha valley": {x:82, y:14},
+  "girard medical center": {x:96, y:88},
+  "haysmed": {x:34, y:38},
+  "holton community hospital": {x:85, y:23},
+  "pleasant view home": {x:56, y:58},
+  "rice community health": {x:50, y:58}
 };
 
 function submitMyLocation() {
   var townInput = document.getElementById('attendeeTownInput') || document.getElementById('townInput');
   if (!townInput) return;
-  var townName = townInput.value.trim();
-  if (!townName) return;
+  var rawName = townInput.value.trim();
+  if (!rawName) return;
 
-  var lookup = townName.toLowerCase();
+  var lookup = rawName.toLowerCase();
   
-  // Use the list, or a random central spot if they type something else
-  var pos = KS_TOWNS[lookup] || { 
-    x: 45 + Math.random() * 10, 
-    y: 45 + Math.random() * 10 
-  };
+  // 1. Try exact match
+  // 2. Try seeing if the hospital name is PART of what they typed
+  var pos = KS_TOWNS[lookup];
+  
+  if (!pos) {
+    // Advanced check: See if their input includes one of our hospital names
+    for (var key in KS_TOWNS) {
+      if (lookup.includes(key)) {
+        pos = KS_TOWNS[key];
+        break;
+      }
+    }
+  }
+
+  // Final fallback if we still don't know where they are (Random central-ish)
+  if (!pos) pos = { x: 45 + Math.random() * 10, y: 45 + Math.random() * 10 };
 
   const newLocRef = push(ref(db, 'mapLocations'));
   set(newLocRef, {
     userName: CUD.name || "Attendee",
-    town: townName.charAt(0).toUpperCase() + townName.slice(1),
+    town: rawName,
     x: pos.x,
     y: pos.y,
     uid: CU.uid
   }).then(function() {
-    showToast("Pinned " + townName + " to the map!");
+    showToast("Pinned your location!");
     townInput.value = "";
   });
-}
-
-function initLiveMap() {
-    const mapLayer = document.getElementById('mapDotLayer');
-    if (!mapLayer) return;
-    onValue(ref(db, 'mapLocations'), (snapshot) => {
-        mapLayer.innerHTML = ''; 
-        const data = snapshot.val();
-        if (!data) return;
-        Object.values(data).forEach(loc => {
-            const dot = document.createElement('div');
-            dot.className = 'map-dot';
-            dot.style.left = loc.x + '%';
-            dot.style.top = loc.y + '%';
-            
-            const tooltip = document.createElement('div');
-            tooltip.className = 'dot-tooltip';
-            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
-            
-            dot.appendChild(tooltip);
-            mapLayer.appendChild(dot);
-        });
-    });
 }
 
 // --- THE APP BRAIN (Ensures Nav Tabs Work) ---

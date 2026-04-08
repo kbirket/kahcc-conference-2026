@@ -476,7 +476,7 @@ function adminNextRound(){
 function adminResetGame(){localAnswers={};set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});updateAdmStatus();}
 
 function clearAllTestData(){
-  if(!confirm("Clear ALL test data? This deletes scores, poll responses, posts, connections, hunt submissions and resets the game. Cannot be undone!"))return;
+  if(!confirm("Clear ALL test data? This deletes scores, polls, posts, connections, map dots, and resets the game. Cannot be undone!"))return;
   set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});
   remove(ref(db,"pollResponses"));
   remove(ref(db,"revealedPolls"));
@@ -484,6 +484,7 @@ function clearAllTestData(){
   remove(ref(db,"posts"));
   remove(ref(db,"hunt"));
   remove(ref(db,"huntPending"));
+  remove(ref(db,"mapLocations")); // <-- This wipes the map clean!
   get(ref(db,"users")).then(function(snap){
     if(!snap.exists())return;
     snap.forEach(function(c){

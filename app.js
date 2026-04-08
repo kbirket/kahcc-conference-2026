@@ -1112,11 +1112,15 @@ function submitMyLocation() {
 function initLiveMap() {
     const mapLayer = document.getElementById('mapDotLayer');
     if (!mapLayer) return;
+    console.log("Map initialized - Listening for dots...");
 
     onValue(ref(db, 'mapLocations'), (snapshot) => {
         mapLayer.innerHTML = ''; 
         const data = snapshot.val();
-        if (!data) return;
+        if (!data) {
+            console.log("No map data found in Firebase.");
+            return;
+        }
 
         Object.values(data).forEach(loc => {
             const dot = document.createElement('div');
@@ -1124,15 +1128,15 @@ function initLiveMap() {
             dot.style.left = loc.x + '%';
             dot.style.top = loc.y + '%';
             
-            // --- THIS IS THE PART THAT ADDS THE LABEL ---
+            // Create the tooltip
             const tooltip = document.createElement('div');
             tooltip.className = 'dot-tooltip';
-            tooltip.innerHTML = `${esc(loc.userName)}<br><span style='color:var(--gold-light); font-weight:normal; font-size:10px;'>${esc(loc.town)}</span>`;
+            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
             
-            dot.appendChild(tooltip); // Puts the label inside the dot
-            mapLayer.appendChild(dot); // Puts the dot on the map
-            // --------------------------------------------
+            dot.appendChild(tooltip);
+            mapLayer.appendChild(dot);
         });
+        console.log("Map updated with " + Object.keys(data).length + " dots.");
     });
 }
 

@@ -624,21 +624,63 @@ function renderMyCard() {
     el.innerHTML = html;
 }
 
+function toggleCardEdit() {
+    var ed = document.getElementById("cardEditor");
+    var btn = document.getElementById("editCardBtn");
+    if(ed.style.display === "none") {
+        ed.style.display = "block";
+        btn.textContent = "Cancel";
+        renderFieldEditor();
+    } else {
+        ed.style.display = "none";
+        btn.textContent = "✏️ Edit My Card";
+    }
+}
+
+function renderFieldEditor() {
+    var el = document.getElementById("cardFields");
+    if (!el) return;
+
+    // Look for existing data, but default the email to their Google one initially
+    var org = "", title = "", phone = "", linkedIn = "", email = CU.email || "";
+    (cardFields || []).forEach(function(f) {
+        var lbl = (f.label || "").toLowerCase();
+        if (lbl.includes("org") || lbl.includes("hospital") || lbl.includes("clinic")) org = f.value;
+        else if (lbl.includes("title") || lbl.includes("role")) title = f.value;
+        else if (lbl.includes("phone") || lbl.includes("cell")) phone = f.value;
+        else if (lbl.includes("linkedin")) linkedIn = f.value;
+        else if (lbl.includes("email")) email = f.value; 
+    });
+
+    // Build the clean form with an editable Work Email box
+    var html = "<div style='background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 15px;'>";
+    html += "<p style='font-size: 12px; color: #666; margin-bottom: 15px; text-align: center;'>Update your digital business card details below.</p>";
+    
+    html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editTitle' placeholder='e.g., Director of Marketing' value='" + esc(title) + "' /></div>";
+    html += "<div class='input-group'><label>Organization</label><input type='text' id='editOrg' placeholder='e.g., Patterson Health Center' value='" + esc(org) + "' /></div>";
+    html += "<div class='input-group'><label>Work Email</label><input type='email' id='editEmail' placeholder='e.g., name@hospital.org' value='" + esc(email) + "' /></div>";
+    html += "<div class='input-group'><label>Phone Number</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
+    html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";
+    
+    html += "</div>";
+
+    el.innerHTML = html;
+}
+
 function saveMyCard() {
     if (!CU) return;
     
-    // Grab the values typed into our new standard boxes
+    // Grab the values typed into the boxes
     var t = document.getElementById("editTitle") ? document.getElementById("editTitle").value.trim() : "";
     var o = document.getElementById("editOrg") ? document.getElementById("editOrg").value.trim() : "";
+    var e = document.getElementById("editEmail") ? document.getElementById("editEmail").value.trim() : "";
     var p = document.getElementById("editPhone") ? document.getElementById("editPhone").value.trim() : "";
     var l = document.getElementById("editLinkedIn") ? document.getElementById("editLinkedIn").value.trim() : "";
 
     var nf = [];
     
-    // Automatically attach their verified Google email
-    nf.push({label: "Email", value: CU.email || ""});
-    
-    // Attach the rest if they filled them out
+    // Attach the fields if they filled them out
+    if (e) nf.push({label: "Email", value: e}); 
     if (t) nf.push({label: "Title", value: t});
     if (o) nf.push({label: "Organization", value: o});
     if (p) nf.push({label: "Phone", value: p});

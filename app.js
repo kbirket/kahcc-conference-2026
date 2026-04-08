@@ -1114,7 +1114,7 @@ function initLiveMap() {
     if (!mapLayer) return;
 
     onValue(ref(db, 'mapLocations'), (snapshot) => {
-        mapLayer.innerHTML = ''; // Clear and redraw
+        mapLayer.innerHTML = ''; 
         const data = snapshot.val();
         if (!data) return;
 
@@ -1124,13 +1124,14 @@ function initLiveMap() {
             dot.style.left = loc.x + '%';
             dot.style.top = loc.y + '%';
             
-            // Build the custom tooltip
+            // --- THIS IS THE PART THAT ADDS THE LABEL ---
             const tooltip = document.createElement('div');
             tooltip.className = 'dot-tooltip';
             tooltip.innerHTML = `${esc(loc.userName)}<br><span style='color:var(--gold-light); font-weight:normal; font-size:10px;'>${esc(loc.town)}</span>`;
             
-            dot.appendChild(tooltip);
-            mapLayer.appendChild(dot);
+            dot.appendChild(tooltip); // Puts the label inside the dot
+            mapLayer.appendChild(dot); // Puts the dot on the map
+            // --------------------------------------------
         });
     });
 }

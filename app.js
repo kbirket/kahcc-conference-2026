@@ -687,12 +687,33 @@ function renderDashboard(){
         var uc=[0,0,0];responses.forEach(function(r){if(r.usage!==undefined)uc[r.usage]++;});
         var takeaways=responses.filter(function(r){return r.takeaway;}).map(function(r){return r.takeaway;});
         html+="<div class='session-result'><div class='sr-title'>"+esc(poll.label)+" <span style='font-size:10px;color:#888;'>("+responses.length+" responses)</span></div>";
-        html+="<div class='emoji-bar'>";
-        RATING_OPTS.forEach(function(o,i){html+="<div class='emoji-stat"+(i===top?" top":"")+"'>"+RATING_EMOJIS[i]+" "+rc[i]+"</div>";});
-        html+="</div><div class='emoji-bar'>";
-        var isConf=poll.id==="conference";var uOpts=isConf?CONF_OPTS:USAGE_OPTS;var uEmojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
-        uOpts.forEach(function(o,i){html+="<div class='emoji-stat'>"+uEmojis[i]+" "+uc[i]+"</div>";});
-        html+="</div>";
+        // Rating summary
+var topLabel=RATING_OPTS[top];
+var topPct=responses.length?Math.round((rc[top]/responses.length)*100):0;
+html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top rating: "+RATING_EMOJIS[top]+" "+topLabel+" ("+topPct+"% of respondents)</div>";
+html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
+RATING_OPTS.forEach(function(o,i){
+  var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;
+  html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'>";
+  html+="<span style='min-width:110px;color:var(--text);'>"+RATING_EMOJIS[i]+" "+o+"</span>";
+  html+="<div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div>";
+  html+="<span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span>";
+  html+="</div>";
+});
+html+="</div>";
+var isConf=poll.id==="conference";var uOpts=isConf?CONF_OPTS:USAGE_OPTS;var uEmojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
+var q2lbl=isConf?"Recommend KAHCC?":"Use in next 30 days?";
+html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>"+q2lbl+"</div>";
+html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
+uOpts.forEach(function(o,i){
+  var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;
+  html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'>";
+  html+="<span style='min-width:110px;color:var(--text);'>"+uEmojis[i]+" "+o+"</span>";
+  html+="<div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div>";
+  html+="<span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span>";
+  html+="</div>";
+});
+html+="</div>";
         if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
         html+="</div>";
       });

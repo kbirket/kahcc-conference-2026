@@ -7,7 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-  .map-dot {
+/* FINAL CLEAN MAP DOTS */
+.map-dot {
     position: absolute;
     width: 10px;
     height: 10px;
@@ -15,19 +16,64 @@
     border: 2px solid #fff;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* A static, clean shadow instead of a glowing aura */
-    animation: popIn 0.5s ease-out forwards; /* Animates just ONCE */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    cursor: pointer;
+    z-index: 10;
+    transition: transform 0.2s ease;
+    /* This keeps your cool entrance animation! */
+    animation: popIn 0.5s ease-out forwards; 
+}
+
+/* Subtle grow effect on hover/tap so it feels responsive */
+.map-dot:hover {
+    transform: translate(-50%, -50%) scale(1.4);
+    z-index: 21; /* Brings the active dot to the front */
+}
+
+/* The Interactive Label */
+.dot-tooltip {
+    position: absolute;
+    bottom: 180%; 
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    background: var(--purple-dark);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 11px;
+    line-height: 1.3;
+    font-weight: bold;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    border: 1px solid var(--gold);
+    opacity: 0;
+}
+
+/* Tooltip Arrow */
+.dot-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--gold) transparent transparent transparent;
+}
+
+/* Reveal logic */
+.map-dot:hover .dot-tooltip, 
+.map-dot:active .dot-tooltip {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
 }
 
 @keyframes popIn {
     0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
     70% { transform: translate(-50%, -50%) scale(1.4); }
     100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
-}
-
-@keyframes dotPulse {
-    0% { box-shadow: 0 0 0 0px rgba(74, 32, 128, 0.7); }
-    100% { box-shadow: 0 0 0 10px rgba(74, 32, 128, 0); }
 }
   /* PROFILE EDITOR FORM */
 .input-group { display: flex; flex-direction: column; gap: 5px; text-align: left; margin-bottom: 12px; }

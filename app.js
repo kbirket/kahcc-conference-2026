@@ -1073,71 +1073,48 @@ function exportPDF(){
     showToast("PDF downloaded!");
   });
 }
-
 // --- KANSAS MAP LOGIC ---
+const KS_TOWNS = {
+  "abilene": {x:64, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
+  "atchison": {x:91, y:20}, "beloit": {x:51, y:27}, "coffeyville": {x:85, y:93},
+  "colby": {x:12, y:24}, "concordia": {x:58, y:25}, "dodge city": {x:26, y:78},
+  "emporia": {x:76, y:58}, "fort scott": {x:95, y:75}, "garden city": {x:15, y:72},
+  "goodland": {x:6, y:25}, "great bend": {x:43, y:56}, "hays": {x:34, y:38},
+  "hutchinson": {x:55, y:66}, "independence": {x:84, y:88}, "iola": {x:88, y:69},
+  "junction city": {x:68, y:37}, "kansas city": {x:96, y:35}, "lawrence": {x:89, y:42},
+  "leavenworth": {x:94, y:30}, "liberal": {x:12, y:93}, "manhattan": {x:72, y:31},
+  "mcpherson": {x:58, y:54}, "newton": {x:63, y:65}, "olathe": {x:94, y:45},
+  "ottawa": {x:88, y:54}, "overland park": {x:95, y:43}, "paola": {x:93, y:56},
+  "parsons": {x:90, y:87}, "pittsburg": {x:96, y:87}, "pratt": {x:43, y:78},
+  "russell": {x:42, y:41}, "salina": {x:60, y:40}, "topeka": {x:85, y:33},
+  "wichita": {x:63, y:75}, "winfield": {x:66, y:88}
+};
 
 function submitMyLocation() {
-    const town = document.getElementById('attendeeTownInput').value.trim();
-    if (!town) return;
+  const townInput = document.getElementById('attendeeTownInput');
+  const townName = townInput.value.trim();
+  if (!townName) return;
 
-    // A simple coordinate lookup for major KS areas to keep it fast/free
-   const ksCoords = {
-        "wichita": {x: 63, y: 73}, "overland park": {x: 95, y: 38}, 
-        "kansas city": {x: 96, y: 32}, "topeka": {x: 83, y: 32},
-        "lawrence": {x: 88, y: 36}, "salina": {x: 60, y: 40},
-        "manhattan": {x: 72, y: 25}, "hutchinson": {x: 55, y: 65},
-        "dodge city": {x: 30, y: 75}, "garden city": {x: 20, y: 70},
-        "hays": {x: 40, y: 40}, "colby": {x: 15, y: 25},
-        "pittsburg": {x: 95, y: 80}, "emporia": {x: 76, y: 55},
-        "liberal": {x: 18, y: 92}, "anthony": {x: 55, y: 93}
-    };
+  const lookup = townName.toLowerCase();
+  
+  // Look up coordinates, or pick a random spot in the middle if town is unknown
+  const pos = KS_TOWNS[lookup] || { 
+    x: 45 + Math.random() * 10, 
+    y: 45 + Math.random() * 10 
+  };
 
-    const lookup = town.toLowerCase();
-    let pos = ksCoords[lookup] || { x: 40 + Math.random() * 20, y: 40 + Math.random() * 20 };
+  // Save to Firebase
+  const newLocRef = push(ref(db, 'mapLocations'));
+  set(newLocRef, {
+    userName: CUD.name || "Attendee",
+    town: townName.charAt(0).toUpperCase() + townName.slice(1),
+    x: pos.x,
+    y: pos.y,
+    uid: CU.uid
+  });
 
-    // Save to Firebase using your specific db variable
-    set(ref(db, 'mapLocations/' + CU.uid), {
-        town: town,
-        userName: CUD ? CUD.name : "Attendee",
-        x: pos.x,
-        y: pos.y,
-        timestamp: Date.now()
-    }).then(() => {
-        document.getElementById('locationInputArea').innerHTML = `<p style="color:var(--easy); font-weight:bold;">📍 Added! See you in Salina!</p>`;
-        showToast("Location added to map!");
-    });
-}
-
-// Listen for all dots in the database
-function initLiveMap() {
-    const mapLayer = document.getElementById('mapDotLayer');
-    if (!mapLayer) return;
-    console.log("Map initialized - Listening for dots...");
-
-    onValue(ref(db, 'mapLocations'), (snapshot) => {
-        mapLayer.innerHTML = ''; 
-        const data = snapshot.val();
-        if (!data) {
-            console.log("No map data found in Firebase.");
-            return;
-        }
-
-        Object.values(data).forEach(loc => {
-            const dot = document.createElement('div');
-            dot.className = 'map-dot';
-            dot.style.left = loc.x + '%';
-            dot.style.top = loc.y + '%';
-            
-            // Create the tooltip
-            const tooltip = document.createElement('div');
-            tooltip.className = 'dot-tooltip';
-            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
-            
-            dot.appendChild(tooltip);
-            mapLayer.appendChild(dot);
-        });
-        console.log("Map updated with " + Object.keys(data).length + " dots.");
-    });
+  townInput.value = "";
+  showToast("Pinned " + townName + " to the map!");
 }
 
 window.APP={

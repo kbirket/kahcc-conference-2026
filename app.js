@@ -943,15 +943,15 @@ function submitMyLocation() {
     if (!town) return;
 
     // A simple coordinate lookup for major KS areas to keep it fast/free
-    const ksCoords = {
-        "wichita": {x: 65, y: 75}, "overland park": {x: 92, y: 35}, 
-        "kansas city": {x: 92, y: 30}, "topeka": {x: 82, y: 32},
-        "lawrence": {x: 87, y: 35}, "salina": {x: 62, y: 38},
-        "manhattan": {x: 75, y: 28}, "hutchinson": {x: 58, y: 68},
-        "dodge city": {x: 28, y: 78}, "garden city": {x: 18, y: 72},
-        "hayes": {x: 38, y: 38}, "colby": {x: 12, y: 25},
-        "pittsburg": {x: 93, y: 85}, "emporia": {x: 78, y: 55},
-        "liberal": {x: 12, y: 92}, "anthony": {x: 55, y: 90}
+   const ksCoords = {
+        "wichita": {x: 63, y: 73}, "overland park": {x: 95, y: 38}, 
+        "kansas city": {x: 96, y: 32}, "topeka": {x: 83, y: 32},
+        "lawrence": {x: 88, y: 36}, "salina": {x: 60, y: 40},
+        "manhattan": {x: 72, y: 25}, "hutchinson": {x: 55, y: 65},
+        "dodge city": {x: 30, y: 75}, "garden city": {x: 20, y: 70},
+        "hays": {x: 40, y: 40}, "colby": {x: 15, y: 25},
+        "pittsburg": {x: 95, y: 80}, "emporia": {x: 76, y: 55},
+        "liberal": {x: 18, y: 92}, "anthony": {x: 55, y: 93}
     };
 
     const lookup = town.toLowerCase();

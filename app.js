@@ -814,6 +814,12 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
+  signIn: function(){
+    signInWithPopup(auth, provider).catch(function(error){
+      console.error(error); // Logs the full error to your browser console
+      showToast("Sign in failed: " + error.message); // Shows you the actual reason on screen
+    });
+  },
   renderDashboard:renderDashboard
   
 };

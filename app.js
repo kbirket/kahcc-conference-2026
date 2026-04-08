@@ -1073,95 +1073,82 @@ function exportPDF(){
     showToast("PDF downloaded!");
   });
 }
-// --- KANSAS MAP LOGIC (Attendee & Organization Verified) ---
+// --- KANSAS MAP LOGIC (High-Res Map Calibration) ---
 const KS_TOWNS = {
-  "abilene": {x:64, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
-  "marion": {x:68, y:52}, "newton": {x:63, y:65}, "osborne": {x:42, y:23},
-  "clay center": {x:64, y:28}, "liberal": {x:12, y:93}, "wichita": {x:63, y:75},
+  "abilene": {x:66, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
+  "marion": {x:68, y:52}, "newton": {x:64, y:65}, "osborne": {x:42, y:23},
+  "clay center": {x:66, y:28}, "liberal": {x:12, y:93}, "wichita": {x:64, y:78},
   "kingman": {x:52, y:78}, "overland park": {x:95, y:43}, "shawnee": {x:95, y:38},
-  "topeka": {x:85, y:33}, "manhattan": {x:72, y:31}, "onaga": {x:79, y:22},
-  "winfield": {x:66, y:88}, "burlington": {x:83, y:62}, "belleville": {x:58, y:14}, 
+  "topeka": {x:85, y:33}, "manhattan": {x:73, y:25}, "onaga": {x:79, y:22},
+  "winfield": {x:68, y:88}, "burlington": {x:83, y:62}, "belleville": {x:58, y:14}, 
   "plainville": {x:34, y:33}, "sabetha": {x:87, y:12}, "smith center": {x:42, y:13}, 
   "kiowa": {x:47, y:93}, "seneca": {x:82, y:14}, "girard": {x:96, y:88}, 
-  "hays": {x:34, y:38}, "holton": {x:85, y:23}, "inman": {x:56, y:58}, 
+  "hays": {x:34, y:38}, "holton": {x:85, y:23}, "inman": {x:58, y:58}, 
   "lyons": {x:50, y:58}, "kansas city": {x:96, y:35}, "salina": {x:58, y:38},
-  "memorial health system": {x:64, y:38}, 
-  "salina regional": {x:58, y:38},
-  "patterson health center": {x:53, y:92},
-  "sck health": {x:68, y:93},
-  "st. luke hospital": {x:68, y:52},
-  "nmc health": {x:63, y:65},
-  "osborne county memorial": {x:42, y:23},
-  "clay county medical": {x:64, y:28},
-  "southwest medical center": {x:12, y:93},
-  "kingman healthcare center": {x:52, y:78},
-  "stormont vail": {x:85, y:33},
-  "new boston creative": {x:72, y:31},
-  "community healthcare system": {x:79, y:22},
-  "william newton": {x:66, y:88},
-  "coffey health system": {x:83, y:62},
-  "republic county hospital": {x:58, y:14},
-  "rooks county": {x:34, y:33},
-  "sabetha community": {x:87, y:12},
-  "smith county memorial": {x:42, y:13},
-  "kiowa district": {x:47, y:93},
-  "kansas hospital association": {x:85, y:33},
-  "nemaha valley": {x:82, y:14},
-  "girard medical center": {x:96, y:88},
-  "haysmed": {x:34, y:38},
-  "holton community hospital": {x:85, y:23},
-  "pleasant view home": {x:56, y:58},
-  "rice community health": {x:50, y:58}
+  "memorial health": {x:66, y:38}, "patterson health": {x:53, y:92},
+  "sck health": {x:68, y:93}, "st. luke": {x:68, y:52}, "nmc health": {x:64, y:65},
+  "osborne county": {x:42, y:23}, "clay county": {x:66, y:28}, "southwest medical": {x:12, y:93},
+  "kingman healthcare": {x:52, y:78}, "stormont vail": {x:85, y:33}, "new boston": {x:73, y:25},
+  "community healthcare": {x:79, y:22}, "william newton": {x:68, y:88}, "coffey health": {x:83, y:62},
+  "republic county": {x:58, y:14}, "rooks county": {x:34, y:33}, "sabetha community": {x:87, y:12},
+  "smith county": {x:42, y:13}, "kiowa district": {x:47, y:93}, "kansas hospital": {x:85, y:33},
+  "nemaha valley": {x:82, y:14}, "girard medical": {x:96, y:88}, "haysmed": {x:34, y:38},
+  "holton community": {x:85, y:23}, "pleasant view": {x:58, y:58}, "rice community": {x:50, y:58}
 };
 
 function submitMyLocation() {
-  var townInput = document.getElementById('attendeeTownInput') || document.getElementById('townInput');
-  if (!townInput) return;
-  var rawName = townInput.value.trim();
-  if (!rawName) return;
-  var lookup = rawName.toLowerCase();
-  var pos = KS_TOWNS[lookup];
-  if (!pos) {
-    for (var key in KS_TOWNS) {
-      if (lookup.includes(key)) { pos = KS_TOWNS[key]; break; }
+  var townIn = document.getElementById('attendeeTownInput') || document.getElementById('townInput');
+  if (!townIn) return;
+  var raw = townIn.value.trim();
+  if (!raw) return;
+  var lookup = raw.toLowerCase();
+  
+  var pos = null;
+  // Deep Search: Check if any town keyword exists anywhere in their input
+  for (var key in KS_TOWNS) {
+    if (lookup.indexOf(key) !== -1 || key.indexOf(lookup) !== -1) {
+      pos = KS_TOWNS[key];
+      break;
     }
   }
-  if (!pos) pos = { x: 45 + Math.random() * 10, y: 45 + Math.random() * 10 };
+
+  // Fallback if no match: Stafford County area (45, 65)
+  if (!pos) pos = { x: 43 + Math.random() * 5, y: 65 + Math.random() * 5 };
 
   push(ref(db, 'mapLocations'), {
     userName: CUD.name || "Attendee",
-    town: rawName,
+    town: raw,
     x: pos.x,
     y: pos.y,
     uid: CU.uid
   }).then(function() {
     showToast("Pinned your location!");
-    townInput.value = "";
+    townIn.value = "";
   });
 }
 
 function initLiveMap() {
-    const mapLayer = document.getElementById('mapDotLayer');
-    if (!mapLayer) return;
-    onValue(ref(db, 'mapLocations'), (snapshot) => {
-        mapLayer.innerHTML = ''; 
-        const data = snapshot.val();
-        if (!data) return;
-        Object.values(data).forEach(loc => {
-            const dot = document.createElement('div');
-            dot.className = 'map-dot';
-            dot.style.left = loc.x + '%';
-            dot.style.top = loc.y + '%';
-            const tooltip = document.createElement('div');
-            tooltip.className = 'dot-tooltip';
-            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
-            dot.appendChild(tooltip);
-            mapLayer.appendChild(dot);
-        });
+  const mapLayer = document.getElementById('mapDotLayer');
+  if (!mapLayer) return;
+  onValue(ref(db, 'mapLocations'), (snap) => {
+    mapLayer.innerHTML = ''; 
+    const data = snap.val();
+    if (!data) return;
+    Object.values(data).forEach(loc => {
+      const dot = document.createElement('div');
+      dot.className = 'map-dot';
+      dot.style.left = loc.x + '%';
+      dot.style.top = loc.y + '%';
+      const tooltip = document.createElement('div');
+      tooltip.className = 'dot-tooltip';
+      tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
+      dot.appendChild(tooltip);
+      mapLayer.appendChild(dot);
     });
+  });
 }
 
-// --- FINAL APP BRAIN (The "Tabs Fix") ---
+// --- FINAL APP BRAIN (Tab Fix) ---
 window.APP = {
   signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
   signOut: function() { signOut(auth); },

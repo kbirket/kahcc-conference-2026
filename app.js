@@ -133,7 +133,7 @@ function refresh(){
   if(id==="tab-community")loadFeed(curFeed);
   if(id==="tab-connect"){renderMyCard();renderConnections();}
   if(id==="tab-hunt")renderHunt();
-  if(id==="tab-schedule"){checkActivePoll();refreshSchedulePollBadges();}
+  if(id==="tab-schedule"){checkActivePoll();refreshSchedulePollBadges();}   if(id==="tab-info")loadQuestions();
   if(id==="tab-dashboard")renderDashboard();
 }
 
@@ -447,7 +447,7 @@ function unlockAdmin(){
   if(v===ADMIN_PASS){
     document.getElementById("adminLock").style.display="none";
     document.getElementById("adminControls").style.display="block";
-    updateAdmStatus();renderPollControls();renderAdminHunt();
+    updateAdmStatus();renderPollControls();renderAdminHunt();renderAdminQuestions();
   }else{
     document.getElementById("adminPassInput").value="";
     document.getElementById("adminPassInput").placeholder="Wrong password...";
@@ -712,6 +712,65 @@ function loadHuntGallery(){
 }
 
 // DASHBOARD
+function submitQuestion(){
+  if(!CU){showToast("Sign in to ask a question!");return;}
+  var inp=document.getElementById("questionInput");
+  if(!inp||!inp.value.trim()){showToast("Please type a question first!");return;}
+  var txt=inp.value.trim();inp.value="";
+  var qRef=push(ref(db,"questions"),{
+    text:txt,
+    name:CUD?CUD.name:"Attendee",
+    animal:CUD?CUD.animal:"&#128062;",
+    uid:CU.uid,
+    ts:Date.now(),
+    answered:false
+  });
+  // Ping ntfy
+  fetch("https://ntfy.sh/kahcc-board-2026-questions",{
+    method:"POST",
+    headers:{"Title":"New Conference Question","Priority":"default","Tags":"question"},
+    body:(CUD?CUD.name:"Attendee")+" asks: "+txt
+  }).catch(function(){});
+  showToast("Question submitted!");
+  loadQuestions();
+}
+
+function loadQuestions(){
+  var el=document.getElementById("questionsList");if(!el)return;
+  onValue(ref(db,"questions"),function(snap){
+    if(!el)return;
+    if(!snap.exists()){el.innerHTML="<div class='feed-empty'>No questions yet. Be the first to ask!</div>";return;}
+    var qs=[];snap.forEach(function(c){var d=c.val();d._key=c.key;qs.push(d);});
+    qs.sort(function(a,b){return(b.ts||0)-(a.ts||0);});
+    el.innerHTML=qs.map(function(q){
+      var reply=q.reply?"<div style='margin-top:8px;padding:8px 10px;background:linear-gradient(135deg,var(--purple),var(--purple-light));border-radius:8px;'><div style='font-size:10px;font-weight:700;color:var(--gold-light);letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;'>&#128221; Board Response</div><div style='font-size:12px;color:#fff;line-height:1.5;'>"+esc(q.reply)+"</div></div>":"<div style='font-size:11px;color:#aaa;font-style:italic;margin-top:5px;'>Awaiting response...</div>";
+      return"<div style='background:#fff;border-radius:12px;padding:13px;margin-bottom:9px;box-shadow:0 2px 8px rgba(74,32,128,.06);border-left:4px solid var(--purple);'><div style='display:flex;align-items:center;gap:7px;margin-bottom:6px;'><span style='font-size:18px;'>"+(q.animal||"&#128062;")+"</span><span style='font-weight:700;font-size:12px;color:var(--purple);'>"+esc(q.name||"Attendee")+"</span><span style='font-size:9px;color:#aaa;margin-left:auto;'>"+fmtTime(q.ts)+"</span></div><div style='font-size:13px;color:var(--text);line-height:1.6;'>"+esc(q.text||"")+"</div>"+reply+"</div>";
+    }).join("");
+  },{onlyOnce:false});
+}
+
+function renderAdminQuestions(){
+  var el=document.getElementById("adminQuestions");if(!el)return;
+  onValue(ref(db,"questions"),function(snap){
+    if(!snap.exists()){el.innerHTML="<p style='font-size:12px;color:#888;'>No questions yet.</p>";return;}
+    var qs=[];snap.forEach(function(c){var d=c.val();d._key=c.key;qs.push(d);});
+    qs.sort(function(a,b){return(a.ts||0)-(b.ts||0);});
+    el.innerHTML=qs.map(function(q){
+      var replySection=q.reply
+        ?"<div style='font-size:11px;color:var(--easy);font-weight:600;margin-top:5px;'>&#9989; Replied: "+esc(q.reply)+"</div>"
+        :"<div style='display:flex;gap:6px;margin-top:7px;'><input id='reply_"+q._key+"' placeholder='Type reply...' style='flex:1;padding:6px 9px;border:1px solid var(--border);border-radius:8px;font-size:12px;font-family:Barlow,sans-serif;' /><button class='adm-btn adm-green' style='font-size:10px;padding:4px 9px;' onclick=\"APP.replyQuestion('"+q._key+"')\">Reply</button></div>";
+      return"<div style='background:#f9f9f9;padding:10px;margin-bottom:8px;border-radius:8px;'><div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:3px;'>"+(q.animal||"")+" "+esc(q.name||"Attendee")+"</div><div style='font-size:12px;color:var(--text);'>"+esc(q.text||"")+"</div>"+replySection+"</div>";
+    }).join("");
+  },{onlyOnce:false});
+}
+
+function replyQuestion(key){
+  var inp=document.getElementById("reply_"+key);
+  if(!inp||!inp.value.trim()){showToast("Please type a reply!");return;}
+  update(ref(db,"questions/"+key),{reply:inp.value.trim(),repliedAt:Date.now()});
+  showToast("Reply posted!");
+}
+
 function renderDashboard(){
   var el=document.getElementById("dashContent");if(!el)return;
   el.innerHTML="<div class='feed-empty'>Loading...</div>";
@@ -912,5 +971,7 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
-  renderDashboard:renderDashboard
+  renderDashboard:renderDashboard,
+  submitQuestion:submitQuestion,
+  replyQuestion:replyQuestion
 };

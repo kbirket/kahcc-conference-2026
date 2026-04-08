@@ -586,23 +586,38 @@ function submitPost(){
 function uploadProfilePic(input) {
     if (!CU || !input.files || !input.files[0]) return;
     var file = input.files[0];
-    showToast("Uploading photo...");
-    
-    // PERFECT MATCH for your Scavenger Hunt folder structure
-    var sr = sRef(storage, "hunt/" + CU.uid + "/profilepic_" + Date.now());
-    
-    uploadBytes(sr, file).then(function(s) {
-        return getDownloadURL(s.ref);
-    }).then(function(url) {
-        // Save the custom URL to their user profile
-        CUD.photoUrl = url;
-        update(ref(db, "users/" + CU.uid), { photoUrl: url });
-        showToast("Photo saved successfully!");
-        renderMyCard(); // Instantly update the card
-    }).catch(function(e) { 
-        showToast("Upload failed: " + e.message); 
-        console.error("Upload error:", e);
-    });
+    showToast("Processing photo...");
+
+    var reader = new FileReader();
+    reader.onload = function(e) {
+        var img = new Image();
+        img.onload = function() {
+            // Create a mini canvas to shrink the image
+            var canvas = document.createElement("canvas");
+            var MAX_SIZE = 150; // Perfect size for a profile circle
+            var size = Math.min(img.width, img.height);
+            canvas.width = MAX_SIZE;
+            canvas.height = MAX_SIZE;
+            var ctx = canvas.getContext("2d");
+            
+            // Center crop the image
+            var sx = (img.width - size) / 2;
+            var sy = (img.height - size) / 2;
+            ctx.drawImage(img, sx, sy, size, size, 0, 0, MAX_SIZE, MAX_SIZE);
+            
+            // Turn the image into a string of text (Base64)
+            var base64Str = canvas.toDataURL("image/jpeg", 0.8);
+            
+            // Save it directly to the standard database! No Storage rules!
+            CUD.photoUrl = base64Str;
+            update(ref(db, "users/" + CU.uid), { photoUrl: base64Str }).then(() => {
+                showToast("Photo saved instantly!");
+                renderMyCard(); 
+            });
+        };
+        img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
 }
 function renderMyCard() {
     var el = document.getElementById("myCardDisplay");
@@ -612,7 +627,7 @@ function renderMyCard() {
         return;
     }
 
-    // Smartly extract standard fields based on what the user typed
+    // Smartly extract standard fields
     var org = "", title = "", linkedIn = "", email = CU.email || "", otherFields = "";
     (cardFields || []).forEach(function(f) {
         if (!f.value) return;
@@ -625,13 +640,9 @@ function renderMyCard() {
         else otherFields += "<div class='detail-item'><span class='detail-label'>" + esc(f.label) + "</span><span class='detail-value'>" + esc(f.value) + "</span></div>";
     });
 
-    // Build the big tappable LinkedIn button if they added a URL
     var lnkBtn = linkedIn ? "<a href='" + (linkedIn.startsWith('http') ? linkedIn : 'https://' + linkedIn) + "' target='_blank' class='linkedin-pill'>Connect on LinkedIn</a>" : "";
 
-    // Assemble the VIP Card
-    var html = "<div class='user-card-deliberate'>";
-    html += "<div class='card-header-main'>";
-var avatarHTML = "";
+    var avatarHTML = "";
     if (CUD.photoUrl) {
         avatarHTML = "<img src='" + CUD.photoUrl + "' style='width:100%;height:100%;border-radius:50%;object-fit:cover;' />";
     } else if (CU.photoURL) {
@@ -639,12 +650,20 @@ var avatarHTML = "";
     } else {
         avatarHTML = (CUD.animal || "&#128062;");
     }
+
+    var html = "<div class='user-card-deliberate'>";
+    html += "<div class='card-header-main'>";
+    html += "<div class='profile-circle' style='overflow:hidden;'>" + avatarHTML + "</div>";
     
-    html += "<div class='profile-circle' style='overflow:hidden;'>" + avatarHTML + "</div>";    html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(title) + "</p></div>";
+    // SWAPPED: Organization is now the big headline!
+    html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(org) + "</p></div>";
     html += "</div>";
     html += "<hr style='border:0; border-top:1px solid rgba(255,255,255,0.2); margin:15px 0;'>";
     html += "<div class='card-details-grid'>";
-    if (org) html += "<div class='detail-item'><span class='detail-label'>&#127973; Organization</span><span class='detail-value'>" + esc(org) + "</span></div>";
+    
+    // SWAPPED: Title is now in the details grid
+    if (title) html += "<div class='detail-item'><span class='detail-label'>&#128188; Title</span><span class='detail-value'>" + esc(title) + "</span></div>";
+    
     if (email) html += "<div class='detail-item'><span class='detail-label'>&#128231; Email</span><span class='detail-value'>" + esc(email) + "</span></div>";
     html += otherFields;
     html += lnkBtn;

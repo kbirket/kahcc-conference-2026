@@ -383,12 +383,11 @@ function answerQ(ri,qi,chosen){
   if(ok){var bonus=Math.floor((localTR/ROUND_SECS)*q.pts*0.25);var ns=(CUD.score||0)+q.pts+bonus;CUD.score=ns;update(ref(db,"users/"+CU.uid),{score:ns});}
   get(ref(db,"gameState")).then(function(snap){renderTriviaUI(snap.val()||{});});
 }
-
 // ADMIN
 function toggleAdm(){document.getElementById("adminPanel").classList.toggle("open");}
 function unlockAdmin(){
   var v=document.getElementById("adminPassInput").value;
-  if(v===ADMIN_PASS){document.getElementById("adminLock").style.display="none";document.getElementById("adminControls").style.display="block";updateAdmStatus();renderPollControls();}
+  if(v===ADMIN_PASS){document.getElementById("adminLock").style.display="none";document.getElementById("adminControls").style.display="block";updateAdmStatus();renderPollControls();renderAdminHunt();}
   else{document.getElementById("adminPassInput").value="";document.getElementById("adminPassInput").placeholder="Wrong password...";}
 }
 function updateAdmStatus(){
@@ -412,6 +411,43 @@ function adminNextRound(){
 }
 function adminResetGame(){localAnswers={};set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});updateAdmStatus();}
 
+// Render the pending Scavenger Hunt submissions for Admins
+function renderAdminHunt(){
+  var el=document.getElementById("adminHuntApproval");if(!el)return;
+  onValue(ref(db,"huntPending"),function(snap){
+    if(!snap.exists()){el.innerHTML="<p style='font-size:12px;'>No pending hunt submissions.</p>";return;}
+    var html="<h3 style='font-size:14px; margin-bottom:10px;'>&#128247; Pending Hunt Approvals</h3>";
+    snap.forEach(function(c){
+      var d=c.val();
+      html+="<div style='background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:5px;'>";
+      html+="<div style='font-weight:bold; font-size:12px;'>"+esc(d.name)+"</div>";
+      html+="<div style='font-size:11px; color:#666; margin-bottom:5px;'>"+esc(d.chTitle)+" ("+d.pts+" pts)</div>";
+      html+="<img src='"+d.url+"' style='width:100%; max-width:200px; border-radius:4px; margin-bottom:5px;' />";
+      html+="<br><button class='adm-btn adm-green' onclick=\"APP.approveHunt('"+d.uid+"','"+d.chId+"',"+d.pts+")\">&#9989; Approve & Award "+d.pts+" pts</button>";
+      html+="</div>";
+    });
+    el.innerHTML=html;
+  });
+}
+
+// Approve a submission, add points to the user, and clear from queue
+function approveHunt(uid, chId, pts){
+  // 1. Mark the specific hunt challenge as approved
+  update(ref(db,"hunt/"+uid+"/"+chId), {approved: true});
+  
+  // 2. Fetch the user's current score and add the new points
+  get(ref(db,"users/"+uid)).then(function(snap){
+    if(snap.exists()){
+      var u = snap.val();
+      var newScore = (u.score || 0) + pts;
+      update(ref(db,"users/"+uid), {score: newScore});
+    }
+  });
+  
+  // 3. Remove it from the pending queue
+  remove(ref(db,"huntPending/"+uid+"_"+chId));
+  showToast("Approved! Points awarded.");
+}
 // COMMUNITY
 var REACTS=["&#127748;","&#128062;","&#129426;","&#128056;","&#127803;"];
 var RNAMES=["Lion","Zebra","Cheetah","Frog","Flower"];
@@ -765,6 +801,7 @@ window.APP={
   submitPoll:submitPoll,
   answerQ:answerQ,
   switchFeed:switchFeed,
+  approveHunt: approveHunt,
   submitPost:submitPost,
   doReact:doReact,
   doReply:doReply,
@@ -778,4 +815,5 @@ window.APP={
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
   renderDashboard:renderDashboard
+  
 };

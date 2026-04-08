@@ -1073,21 +1073,22 @@ function exportPDF(){
     showToast("PDF downloaded!");
   });
 }
-// --- KANSAS MAP LOGIC ---
+// --- KANSAS MAP LOGIC (Attendee Verified) ---
 const KS_TOWNS = {
-  "abilene": {x:64, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
-  "atchison": {x:91, y:20}, "beloit": {x:51, y:27}, "coffeyville": {x:85, y:93},
-  "colby": {x:12, y:24}, "concordia": {x:58, y:25}, "dodge city": {x:26, y:78},
-  "emporia": {x:76, y:58}, "fort scott": {x:95, y:75}, "garden city": {x:15, y:72},
-  "goodland": {x:6, y:25}, "great bend": {x:43, y:56}, "hays": {x:34, y:38},
-  "hutchinson": {x:55, y:66}, "independence": {x:84, y:88}, "iola": {x:88, y:69},
-  "junction city": {x:68, y:37}, "kansas city": {x:96, y:35}, "lawrence": {x:89, y:42},
-  "leavenworth": {x:94, y:30}, "liberal": {x:12, y:93}, "manhattan": {x:72, y:31},
-  "mcpherson": {x:58, y:54}, "newton": {x:63, y:65}, "olathe": {x:94, y:45},
-  "ottawa": {x:88, y:54}, "overland park": {x:95, y:43}, "paola": {x:93, y:56},
-  "parsons": {x:90, y:87}, "pittsburg": {x:96, y:87}, "pratt": {x:43, y:78},
-  "russell": {x:42, y:41}, "salina": {x:60, y:40}, "topeka": {x:85, y:33},
-  "wichita": {x:63, y:75}, "winfield": {x:66, y:88}
+  // From your attendee list
+  "salina": {x:58, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
+  "marion": {x:68, y:52}, "newton": {x:63, y:65}, "osborne": {x:42, y:23},
+  "clay center": {x:64, y:28}, "liberal": {x:12, y:93}, "wichita": {x:63, y:75},
+  "kingman": {x:52, y:78}, "overland park": {x:95, y:43}, "shawnee": {x:95, y:38},
+  "topeka": {x:85, y:33}, "manhattan": {x:72, y:31}, "onaga": {x:79, y:22},
+  "winfield": {x:66, y:88}, "abilene": {x:64, y:38}, "burlington": {x:83, y:62},
+  "belleville": {x:58, y:14}, "plainville": {x:34, y:33}, "sabetha": {x:87, y:12},
+  "smith center": {x:42, y:13}, "kiowa": {x:47, y:93}, "seneca": {x:82, y:14},
+  "girard": {x:96, y:88}, "hays": {x:34, y:38}, "holton": {x:85, y:23},
+  "inman": {x:56, y:58}, "lyons": {x:50, y:58}, "kansas city": {x:96, y:35},
+  // Common backups
+  "hutchinson": {x:55, y:66}, "emporia": {x:76, y:58}, "lawrence": {x:89, y:42},
+  "dodge city": {x:26, y:78}, "garden city": {x:15, y:72}, "colby": {x:12, y:24}
 };
 
 function submitMyLocation() {
@@ -1097,7 +1098,12 @@ function submitMyLocation() {
   if (!townName) return;
 
   var lookup = townName.toLowerCase();
-  var pos = KS_TOWNS[lookup] || { x: 45 + Math.random() * 10, y: 45 + Math.random() * 10 };
+  
+  // Use the list, or a random central spot if they type something else
+  var pos = KS_TOWNS[lookup] || { 
+    x: 45 + Math.random() * 10, 
+    y: 45 + Math.random() * 10 
+  };
 
   const newLocRef = push(ref(db, 'mapLocations'));
   set(newLocRef, {
@@ -1124,16 +1130,18 @@ function initLiveMap() {
             dot.className = 'map-dot';
             dot.style.left = loc.x + '%';
             dot.style.top = loc.y + '%';
+            
             const tooltip = document.createElement('div');
             tooltip.className = 'dot-tooltip';
             tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
+            
             dot.appendChild(tooltip);
             mapLayer.appendChild(dot);
         });
     });
 }
 
-// --- THE BRAIN OF THE APP (MUST BE AT THE VERY BOTTOM) ---
+// --- THE APP BRAIN (Ensures Nav Tabs Work) ---
 window.APP = {
   signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
   signOut: function() { signOut(auth); },

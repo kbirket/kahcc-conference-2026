@@ -300,6 +300,38 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .poll-alert{background:linear-gradient(135deg,var(--orange),#c96f00);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .poll-alert-text{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;color:#fff;}
 .poll-alert-btn{background:#fff;color:var(--orange);border:none;border-radius:20px;padding:4px 12px;font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;}
+  /* SPONSOR SLIDER STYLES */
+.sponsor-slider {
+  overflow: hidden;
+  background-color: #ffffff;
+  padding: 12px 0;
+  border-top: 2px solid #f0ecf8;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+}
+
+.sponsor-track {
+  display: flex;
+  align-items: center;
+  gap: 40px; 
+  width: max-content;
+  animation: scrollSponsors 25s linear infinite; 
+}
+
+.sponsor-track img {
+  height: 35px; 
+  width: auto;
+  object-fit: contain;
+  opacity: 0.9;
+}
+
+@keyframes scrollSponsors {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); } 
+}
 </style>
 </head>
 <body>
@@ -491,7 +523,27 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
   </div>
 </div>
 </div>
-<div id="sessionModal" class="modal-ov" onclick="APP.closeModalOutside(event)">
+
+  <div class="sponsor-slider">
+  <div class="sponsor-track">
+    <img src="HPM%20Logo%202.png" alt="HPM" />
+    <img src="HW-Logo-Vertical-2c.png" alt="HW" />
+    <img src="MSS%20LOGO%20Full%20Color.png" alt="MSS" />
+    <img src="New%20Boston%20Logo_CMYK.png" alt="New Boston" />
+    <img src="Onspire_Horizontal_RGB.png" alt="Onspire" />
+    <img src="jet_full_logo_rgb.jpg" alt="Jet" />
+    <img src="rater8-Square.png" alt="rater8" />
+    
+    <img src="HPM%20Logo%202.png" alt="HPM" />
+    <img src="HW-Logo-Vertical-2c.png" alt="HW" />
+    <img src="MSS%20LOGO%20Full%20Color.png" alt="MSS" />
+    <img src="New%20Boston%20Logo_CMYK.png" alt="New Boston" />
+    <img src="Onspire_Horizontal_RGB.png" alt="Onspire" />
+    <img src="jet_full_logo_rgb.jpg" alt="Jet" />
+    <img src="rater8-Square.png" alt="rater8" />
+  </div>
+</div>
+  <div id="sessionModal" class="modal-ov" onclick="APP.closeModalOutside(event)">
   <div class="modal">
     <div class="mhdr"><div class="mtime" id="modalTime"></div><h2 id="modalTitle"></h2><div class="msub" id="modalSub"></div></div>
     <div class="mbody" id="modalBody"></div>

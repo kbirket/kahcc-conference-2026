@@ -1130,21 +1130,49 @@ function submitMyLocation() {
 function initLiveMap() {
     const mapLayer = document.getElementById('mapDotLayer');
     if (!mapLayer) return;
+
     onValue(ref(db, 'mapLocations'), (snap) => {
         mapLayer.innerHTML = ''; 
         const data = snap.val();
         if (!data) return;
+
+        // 1. Group attendees by their specific X/Y coordinates
+        const groups = {};
         Object.values(data).forEach(loc => {
+            const key = `${loc.x}_${loc.y}`;
+            if (!groups[key]) {
+                groups[key] = {
+                    x: loc.x,
+                    y: loc.y,
+                    town: loc.town,
+                    people: []
+                };
+            }
+            groups[key].people.push(loc.userName);
+        });
+
+        // 2. Draw one dot per unique location
+        Object.values(groups).forEach(group => {
             const dot = document.createElement('div');
             dot.className = 'map-dot';
-            dot.setAttribute('tabindex', '0'); // Allows it to be "tapped" on mobile
-            dot.style.left = loc.x + '%';
-            dot.style.top = loc.y + '%';
-            
+            dot.setAttribute('tabindex', '0');
+            dot.style.left = group.x + '%';
+            dot.style.top = group.y + '%';
+
+            // 3. Build a list of all names for the tooltip
+            const nameList = group.people.join('<br>');
+            const countLabel = group.people.length > 1 ? `<div style="border-top:1px solid rgba(255,255,255,0.2); margin-top:5px; padding-top:5px; color:var(--gold-light); font-size:9px;">${group.people.length} Attendees</div>` : '';
+
             const tooltip = document.createElement('div');
             tooltip.className = 'dot-tooltip';
-            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
-            
+            tooltip.innerHTML = `
+                <span style="color:var(--gold); font-size:10px; text-transform:uppercase; letter-spacing:1px;">${esc(group.town)}</span><br>
+                <div style="max-height: 150px; overflow-y: auto; margin-top:4px;">
+                    ${nameList}
+                </div>
+                ${countLabel}
+            `;
+
             dot.appendChild(tooltip);
             mapLayer.appendChild(dot);
         });

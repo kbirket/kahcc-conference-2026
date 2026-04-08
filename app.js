@@ -471,8 +471,26 @@ function adminNextRound(){
     updateAdmStatus();
   });
 }
-function adminResetGame(){localAnswers={};set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});updateAdmStatus();}  function clearAllTestData(){   if(!confirm("Clear ALL test data? This deletes scores, poll responses, posts, connections, hunt submissions and resets the game. Cannot be undone!"))return;   set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});   remove(ref(db,"pollResponses"));   remove(ref(db,"revealedPolls"));   remove(ref(db,"activePoll"));   remove(ref(db,"posts"));   remove(ref(db,"hunt"));   remove(ref(db,"huntPending"));   // Reset all user scores and connections   get(ref(db,"users")).then(function(snap){     if(!snap.exists())return;     snap.forEach(function(c){       update(ref(db,"users/"+c.key),{score:0,huntScore:0,connections:{}});     });   });   localAnswers={};   showToast("All test data cleared!"); }
+function adminResetGame(){localAnswers={};set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});updateAdmStatus();}
 
+function clearAllTestData(){
+  if(!confirm("Clear ALL test data? This deletes scores, poll responses, posts, connections, hunt submissions and resets the game. Cannot be undone!"))return;
+  set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});
+  remove(ref(db,"pollResponses"));
+  remove(ref(db,"revealedPolls"));
+  remove(ref(db,"activePoll"));
+  remove(ref(db,"posts"));
+  remove(ref(db,"hunt"));
+  remove(ref(db,"huntPending"));
+  get(ref(db,"users")).then(function(snap){
+    if(!snap.exists())return;
+    snap.forEach(function(c){
+      update(ref(db,"users/"+c.key),{score:0,huntScore:0,connections:{}});
+    });
+  });
+  localAnswers={};
+  showToast("All test data cleared!");
+}
 function renderAdminHunt(){
   var el=document.getElementById("adminHuntApproval");if(!el)return;
   onValue(ref(db,"huntPending"),function(snap){

@@ -1128,66 +1128,41 @@ function submitMyLocation() {
 }
 
 function initLiveMap() {
-  const mapLayer = document.getElementById('mapDotLayer');
-  if (!mapLayer) return;
-  onValue(ref(db, 'mapLocations'), (snap) => {
-    mapLayer.innerHTML = ''; 
-    const data = snap.val();
-    if (!data) return;
-    Object.values(data).forEach(loc => {
-      const dot = document.createElement('div');
-      dot.className = 'map-dot';
-      dot.style.left = loc.x + '%';
-      dot.style.top = loc.y + '%';
-      const tooltip = document.createElement('div');
-      tooltip.className = 'dot-tooltip';
-      tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
-      dot.appendChild(tooltip);
-      mapLayer.appendChild(dot);
+    const mapLayer = document.getElementById('mapDotLayer');
+    if (!mapLayer) return;
+    onValue(ref(db, 'mapLocations'), (snap) => {
+        mapLayer.innerHTML = ''; 
+        const data = snap.val();
+        if (!data) return;
+        Object.values(data).forEach(loc => {
+            const dot = document.createElement('div');
+            dot.className = 'map-dot';
+            dot.setAttribute('tabindex', '0'); // Allows it to be "tapped" on mobile
+            dot.style.left = loc.x + '%';
+            dot.style.top = loc.y + '%';
+            
+            const tooltip = document.createElement('div');
+            tooltip.className = 'dot-tooltip';
+            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
+            
+            dot.appendChild(tooltip);
+            mapLayer.appendChild(dot);
+        });
     });
-  });
 }
 
-// --- FINAL APP BRAIN (Tab Fix) ---
+// THE FINAL BRAIN - MUST BE AT THE VERY BOTTOM
 window.APP = {
-  signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
-  signOut: function() { signOut(auth); },
-  switchTab: switchTab,
-  openModal: openModal,
-  closeModal: closeModal,
-  closeModalOutside: closeModalOutside,
-  showPoll: showPoll,
-  selPoll: selPoll,
-  submitPoll: submitPoll,
-  closePollModal: closePollModal,
-  closePollModalOutside: closeModalOutside,
-  toggleAdminSection: toggleAdminSection,
-  unlockAdmin: unlockAdmin,
-  adminStartGame: adminStartGame,
-  adminNextRound: adminNextRound,
-  adminResetGame: adminResetGame,
-  clearAllTestData: clearAllTestData,
-  activatePoll: activatePoll,
-  closePollAdmin: closePollAdmin,
-  revealPoll: revealPoll,
-  answerQ: answerQ,
-  switchFeed: switchFeed,
-  submitPost: submitPost,
-  doReact: doReact,
-  doReply: doReply,
-  approveHunt: approveHunt,
-  toggleCardEdit: toggleCardEdit,
-  saveMyCard: saveMyCard,
-  uploadProfilePic: uploadProfilePic,
-  searchAttendees: searchAttendees,
-  doConnect: doConnect,
-  downloadConnections: downloadConnections,
-  emailConnections: emailConnections,
-  uploadHunt: uploadHunt,
-  exportPDF: exportPDF,
-  renderDashboard: renderDashboard,
-  submitQuestion: submitQuestion,
-  replyQuestion: replyQuestion,
+  signIn: () => signInWithPopup(auth, provider).catch(e => showToast(e.message)),
+  signOut: () => signOut(auth),
+  switchTab: (id) => { 
+      if(typeof switchTab === 'function') switchTab(id); 
+      else console.error("switchTab function missing!");
+  },
+  // ... (keep all your other functions here like openModal, submitPoll, etc.)
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap
 };
+
+// Re-map switchTab specifically for mobile browsers that are picky
+window.switchTab = switchTab;

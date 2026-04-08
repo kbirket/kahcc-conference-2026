@@ -29,6 +29,11 @@
     0% { box-shadow: 0 0 0 0px rgba(74, 32, 128, 0.7); }
     100% { box-shadow: 0 0 0 10px rgba(74, 32, 128, 0); }
 }
+  /* PROFILE EDITOR FORM */
+.input-group { display: flex; flex-direction: column; gap: 5px; text-align: left; margin-bottom: 12px; }
+.input-group label { font-size: 11px; font-weight: 700; color: var(--purple); text-transform: uppercase; letter-spacing: 0.5px; }
+.input-group input { width: 100%; border: 2px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--text); background: #fcfcfc; transition: all 0.2s; }
+.input-group input:focus { outline: none; border-color: var(--purple); background: #fff; box-shadow: 0 0 0 3px rgba(74,32,128,0.1); }
 :root{--purple:#4a2080;--purple-dark:#2d1350;--purple-light:#6b3aad;--orange:#e8820a;--gold:#c8a84b;--gold-light:#e8c96a;--easy:#1a8a6e;--medium:#d47a00;--hard:#c02828;--off-white:#f8f5ff;--gray:#f0ecf8;--text:#1a0a30;--border:#e0d8f0;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--text);min-height:100vh;overflow-x:hidden;}
@@ -444,7 +449,6 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
         <div id="myCardDisplay"></div>
 <button class="save-card-btn" onclick="APP.toggleCardEdit()" id="editCardBtn" style="margin-top:10px;">✏️ Edit My Card</button>        <div id="cardEditor" style="display:none;margin-top:13px;">
           <div id="cardFields"></div>
-          <button class="add-field-btn" onclick="APP.addCardField()">+ Add Field</button>
           <div style="height:9px;"></div>
           <button class="save-card-btn" onclick="APP.saveMyCard()">Save Card</button>
         </div>

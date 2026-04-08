@@ -588,8 +588,8 @@ function uploadProfilePic(input) {
     var file = input.files[0];
     showToast("Uploading photo...");
     
-    // We use the "hunt" folder path since we know Firebase allows uploads here!
-    var sr = sRef(storage, "hunt/" + CU.uid + "_profilepic");
+    // PERFECT MATCH for your Scavenger Hunt folder structure
+    var sr = sRef(storage, "hunt/" + CU.uid + "/profilepic_" + Date.now());
     
     uploadBytes(sr, file).then(function(s) {
         return getDownloadURL(s.ref);
@@ -600,8 +600,7 @@ function uploadProfilePic(input) {
         showToast("Photo saved successfully!");
         renderMyCard(); // Instantly update the card
     }).catch(function(e) { 
-        // This will tell us if Firebase is still blocking it!
-        showToast("Upload blocked: " + e.message); 
+        showToast("Upload failed: " + e.message); 
         console.error("Upload error:", e);
     });
 }
@@ -686,8 +685,8 @@ function renderFieldEditor() {
     var html = "<div style='background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 15px;'>";
     html += "<p style='font-size: 12px; color: #666; margin-bottom: 15px; text-align: center;'>Update your digital business card details below.</p>";
     html += "<div class='input-group'><label>Profile Photo</label><input type='file' accept='image/*' onchange='APP.uploadProfilePic(this)' style='padding: 6px;' /></div>";
-    html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editTitle' placeholder='e.g., Director of Marketing' value='" + esc(title) + "' /></div>";
-    html += "<div class='input-group'><label>Organization</label><input type='text' id='editOrg' placeholder='e.g., Patterson Health Center' value='" + esc(org) + "' /></div>";
+    html += "<div class='input-group'><label>Organization</label><input type='text' id='editTitle' placeholder='e.g., Wonderful Hospital' value='" + esc(title) + "' /></div>";
+    html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editOrg' placeholder='e.g., Director of marketing' value='" + esc(org) + "' /></div>";
     html += "<div class='input-group'><label>Work Email</label><input type='email' id='editEmail' placeholder='e.g., name@hospital.org' value='" + esc(email) + "' /></div>";
     html += "<div class='input-group'><label>Phone Number</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
     html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";

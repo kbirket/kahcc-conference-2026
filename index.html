@@ -384,24 +384,7 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
     <div class="trivia-hero">
       <h2>&#128062; Trivia Trek</h2>
       <p>6 rounds &bull; 3 questions each &bull; Every 15 min &bull; Speed earns bonus pts!</p>
-      <button class="admin-toggle" onclick="APP.toggleAdm()">&#9881; Admin</button>
-    </div>
-    <div id="adminPanel" class="adm-panel">
-      <h3>&#9881; Admin Controls</h3>
-      <div id="adminLock">
-        <input type="password" class="adm-inp" id="adminPassInput" placeholder="Admin password..." />
-        <button class="adm-btn adm-primary" onclick="APP.unlockAdmin()">Unlock</button>
-      </div>
-      <div id="adminControls" style="display:none;">
-        <div id="adminStatus" class="adm-status adm-info">Game not started.</div>
-        <div class="adm-row" style="margin-top:8px;">
-          <button class="adm-btn adm-orange" onclick="APP.adminStartGame()">&#9654; Start</button>
-          <button class="adm-btn adm-orange" onclick="APP.adminNextRound()">&#9193; Next Round</button>
-          <button class="adm-btn adm-red" onclick="APP.adminResetGame()">&#8635; Reset</button>
-        </div>
-        <div id="adminHuntApproval" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
-  </div>
-        <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
+           <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:12px;">
           <div class="sec-hdr">Session Polls</div>
           <div id="pollControls"></div>
         </div>
@@ -566,6 +549,24 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
         <p><strong>Talk 20 interest:</strong> Roger Stockman - roger.stockman@rhrjc.org</p>
       </div>
     </div>
+  </div>
+<div style="text-align: center; margin-top: 50px; padding-bottom: 20px;">
+  <span onclick="APP.toggleAdm()" style="font-size: 12px; color: #b3b3b3; cursor: pointer; text-decoration: underline;">App Administration</span>
+</div>    </div>
+    <div id="adminPanel" class="adm-panel">
+      <h3>&#9881; Admin Controls</h3>
+      <div id="adminLock">
+        <input type="password" class="adm-inp" id="adminPassInput" placeholder="Admin password..." />
+        <button class="adm-btn adm-primary" onclick="APP.unlockAdmin()">Unlock</button>
+      </div>
+      <div id="adminControls" style="display:none;">
+        <div id="adminStatus" class="adm-status adm-info">Game not started.</div>
+        <div class="adm-row" style="margin-top:8px;">
+          <button class="adm-btn adm-orange" onclick="APP.adminStartGame()">&#9654; Start</button>
+          <button class="adm-btn adm-orange" onclick="APP.adminNextRound()">&#9193; Next Round</button>
+          <button class="adm-btn adm-red" onclick="APP.adminResetGame()">&#8635; Reset</button>
+        </div>
+        <div id="adminHuntApproval" style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px;">
   </div>
 </div>
 </div>

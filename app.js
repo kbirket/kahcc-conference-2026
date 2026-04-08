@@ -182,8 +182,7 @@ function checkActivePoll(){
 onValue(ref(db,"activePoll"),function(){checkActivePoll();});
 
 function showPoll(pid){
-  switchTab("trivia");
-  setTimeout(function(){renderPollUI(pid);},150);
+  renderPollUI(pid);
 }
 
 function renderPollControls(){
@@ -207,7 +206,7 @@ function revealPoll(pid){set(ref(db,"revealedPolls/"+pid),true);showToast("Resul
 
 function renderPollUI(pollId){
   var poll=POLLS.find(function(p){return p.id===pollId;});if(!poll)return;
-  var el=document.getElementById("triviaGame");if(!el)return;
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
   if(!CU){el.innerHTML="<div class='wait-card'><p>Sign in to rate sessions!</p></div>";return;}
   Promise.all([get(ref(db,"pollResponses/"+pollId+"/"+CU.uid)),get(ref(db,"revealedPolls/"+pollId))]).then(function(res){
     var already=res[0].exists();var revealed=res[1].val()===true;
@@ -245,13 +244,13 @@ function submitPoll(pollId){
   var data={rating:window._pollSel["rating"],usage:window._pollSel["usage"],takeaway:takeaway,name:CUD?CUD.name:"Attendee",ts:Date.now()};
   if(topic)data.topic=topic;
   set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
-  var el=document.getElementById("triviaGame");
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";
   if(el)el.innerHTML="<div class='poll-done'>&#9989; Thank you! Your feedback has been submitted.</div>";
   showToast("Feedback submitted!");
 }
 
 function renderPollResults(pollId,poll,revealed){
-  var el=document.getElementById("triviaGame");if(!el)return;
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
   get(ref(db,"pollResponses/"+pollId)).then(function(snap){
     if(!snap.exists()){el.innerHTML="<div class='wait-card'><p>No responses yet.</p></div>";return;}
     var responses=[];snap.forEach(function(c){responses.push(c.val());});
@@ -273,7 +272,7 @@ function renderPollResults(pollId,poll,revealed){
 
 // TRIVIA
 function renderTriviaGame(){
-  var el=document.getElementById("triviaGame");if(!el)return;
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
   if(triviaUnsub){triviaUnsub();triviaUnsub=null;}
   triviaUnsub=onValue(ref(db,"gameState"),function(snap){
     var gs=snap.val()||{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS};
@@ -283,7 +282,7 @@ function renderTriviaGame(){
 }
 
 function renderTriviaUI(gs){
-  var el=document.getElementById("triviaGame");if(!el)return;
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
   if(gs.gameOver){renderGameOver(gs);return;}
   if(!gs.started){el.innerHTML="<div class='wait-card'><div class='wait-icon'>&#128062;</div><h3>Game Not Started Yet</h3><p>Trivia Trek begins during the Museum Mixer Thursday evening. Get ready!</p></div>";return;}
   if(gs.currentRound<0){el.innerHTML="<div class='wait-card'><div class='wait-icon'>&#9201;</div><h3>Get Ready!</h3><p>Round 1 drops soon. Sign in to play!</p></div>"+lbHTML();return;}
@@ -369,7 +368,7 @@ function loadLeaderboard(){
 }
 
 function renderGameOver(){
-  var el=document.getElementById("triviaGame");if(!el)return;
+  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
   var myScore=CUD?CUD.score:0;
   var maxPts=ROUNDS.reduce(function(s,r){return s+r.questions.reduce(function(ss,q){return ss+q.pts;},0);},0);
   el.innerHTML="<div class='game-over'><div class='trophy'>&#127942;</div><h2>Trivia Trek Complete!</h2>"+(CU?"<p>Your final score:</p><div class='final-score'>"+myScore+"</div><p style='margin-top:5px;font-size:11px;color:var(--gold-light);'>out of "+maxPts+" pts</p>":"<p>Thanks for watching!</p>")+"</div>"+lbHTML();
@@ -827,6 +826,9 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
+  toggleAdminSection:toggleAdminSection,
+closePollModal:closePollModal,
+closePollModalOutside:closePollModalOutside,
   signIn: function(){
     signInWithPopup(auth, provider).catch(function(error){
       console.error(error); // Logs the full error to your browser console
@@ -834,5 +836,16 @@ window.APP={
     });
   },
   renderDashboard:renderDashboard
-  
+
+  function toggleAdminSection(){
+  var b=document.getElementById("adminSectionBody");
+  b.style.display=b.style.display==="none"?"block":"none";
+}
+function closePollModal(){
+  document.getElementById("pollModal").classList.remove("open");
+  document.body.style.overflow="";
+}
+function closePollModalOutside(e){
+  if(e.target.id==="pollModal") closePollModal();
+}
 };

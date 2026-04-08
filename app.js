@@ -594,20 +594,61 @@ function toggleCardEdit(){
   if(ed.style.display==="none"){ed.style.display="block";btn.textContent="Cancel";renderFieldEditor();}
   else{ed.style.display="none";btn.textContent="&#9998; Edit My Card";}
 }
-function renderFieldEditor(){
-  var el=document.getElementById("cardFields");if(!el)return;
-  var html="";
-  (cardFields||[]).forEach(function(f,i){html+="<div class='field-row'><input placeholder='Label' value='"+esc(f.label)+"' id='fl_"+i+"' /><input placeholder='Value' value='"+esc(f.value)+"' id='fv_"+i+"' /></div>";});
-  el.innerHTML=html;
+function renderFieldEditor() {
+    var el = document.getElementById("cardFields");
+    if (!el) return;
+
+    // Look for existing data to pre-fill the boxes
+    var org = "", title = "", phone = "", linkedIn = "";
+    (cardFields || []).forEach(function(f) {
+        var lbl = (f.label || "").toLowerCase();
+        if (lbl.includes("org") || lbl.includes("hospital") || lbl.includes("clinic")) org = f.value;
+        else if (lbl.includes("title") || lbl.includes("role")) title = f.value;
+        else if (lbl.includes("phone") || lbl.includes("cell")) phone = f.value;
+        else if (lbl.includes("linkedin")) linkedIn = f.value;
+    });
+
+    // Build the clean, standard business card form
+    var html = "<div style='background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 15px;'>";
+    html += "<p style='font-size: 12px; color: #666; margin-bottom: 15px; text-align: center;'>Update your digital business card details below.</p>";
+    
+    html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editTitle' placeholder='e.g., Director of Marketing' value='" + esc(title) + "' /></div>";
+    html += "<div class='input-group'><label>Organization</label><input type='text' id='editOrg' placeholder='e.g., Patterson Health Center' value='" + esc(org) + "' /></div>";
+    html += "<div class='input-group'><label>Phone Number</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
+    html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";
+    
+    html += "</div>";
+
+    el.innerHTML = html;
 }
-function addCardField(){cardFields.push({label:"",value:""});renderFieldEditor();}
-function saveMyCard(){
-  if(!CU)return;
-  var nf=[];
-  (cardFields||[]).forEach(function(_,i){var l=document.getElementById("fl_"+i);var v=document.getElementById("fv_"+i);if(l&&v&&(l.value.trim()||v.value.trim()))nf.push({label:l.value.trim(),value:v.value.trim()});});
-  cardFields=nf;CUD.card={fields:cardFields};
-  update(ref(db,"users/"+CU.uid),{card:{fields:cardFields}});
-  toggleCardEdit();renderMyCard();showToast("Card saved!");
+
+function saveMyCard() {
+    if (!CU) return;
+    
+    // Grab the values typed into our new standard boxes
+    var t = document.getElementById("editTitle") ? document.getElementById("editTitle").value.trim() : "";
+    var o = document.getElementById("editOrg") ? document.getElementById("editOrg").value.trim() : "";
+    var p = document.getElementById("editPhone") ? document.getElementById("editPhone").value.trim() : "";
+    var l = document.getElementById("editLinkedIn") ? document.getElementById("editLinkedIn").value.trim() : "";
+
+    var nf = [];
+    
+    // Automatically attach their verified Google email
+    nf.push({label: "Email", value: CU.email || ""});
+    
+    // Attach the rest if they filled them out
+    if (t) nf.push({label: "Title", value: t});
+    if (o) nf.push({label: "Organization", value: o});
+    if (p) nf.push({label: "Phone", value: p});
+    if (l) nf.push({label: "LinkedIn", value: l});
+
+    cardFields = nf;
+    CUD.card = {fields: cardFields};
+    update(ref(db, "users/" + CU.uid), {card: {fields: cardFields}});
+    
+    toggleCardEdit();
+    renderMyCard();
+    showToast("Card saved!");
 }
 function searchAttendees(){
   var q=document.getElementById("attendeeSearch").value.trim().toLowerCase();

@@ -629,7 +629,7 @@ function renderMyCard() {
     }
 
     // Smartly extract standard fields
-    var org = "", title = "", linkedIn = "", email = CU.email || "", otherFields = "";
+    var org = "", title = "", linkedIn = "", email = CU.email || "", phone = "", otherFields = "";
     (cardFields || []).forEach(function(f) {
         if (!f.value) return;
         var lbl = (f.label || "").toLowerCase();
@@ -638,6 +638,7 @@ function renderMyCard() {
         else if (lbl.includes("title") || lbl.includes("role")) title = f.value;
         else if (lbl.includes("linkedin")) linkedIn = f.value;
         else if (lbl.includes("email")) email = f.value;
+        else if (lbl.includes("phone") || lbl.includes("cell") || lbl.includes("mobile")) phone = f.value;
         else otherFields += "<div class='detail-item'><span class='detail-label'>" + esc(f.label) + "</span><span class='detail-value'>" + esc(f.value) + "</span></div>";
     });
 
@@ -656,16 +657,19 @@ function renderMyCard() {
     html += "<div class='card-header-main'>";
     html += "<div class='profile-circle' style='overflow:hidden;'>" + avatarHTML + "</div>";
     
-    // SWAPPED: Organization is now the big headline!
     html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(org) + "</p></div>";
     html += "</div>";
     html += "<hr style='border:0; border-top:1px solid rgba(255,255,255,0.2); margin:15px 0;'>";
     html += "<div class='card-details-grid'>";
     
-    // SWAPPED: Title is now in the details grid
     if (title) html += "<div class='detail-item'><span class='detail-label'>&#128188; Title</span><span class='detail-value'>" + esc(title) + "</span></div>";
     
-    if (email) html += "<div class='detail-item'><span class='detail-label'>&#128231; Email</span><span class='detail-value'>" + esc(email) + "</span></div>";
+    // NEW: Tappable Email Hyperlink
+    if (email) html += "<div class='detail-item'><span class='detail-label'>&#128231; Email</span><span class='detail-value'><a href='mailto:" + esc(email) + "' style='color: #e0d8f0; text-decoration: none; border-bottom: 1px dashed #e0d8f0;'>" + esc(email) + "</a></span></div>";
+    
+    // NEW: Tappable Phone Hyperlink
+    if (phone) html += "<div class='detail-item'><span class='detail-label'>&#128241; Phone</span><span class='detail-value'><a href='tel:" + esc(phone) + "' style='color: #e0d8f0; text-decoration: none; border-bottom: 1px dashed #e0d8f0;'>" + esc(phone) + "</a></span></div>";
+    
     html += otherFields;
     html += lnkBtn;
     html += "</div></div>";
@@ -708,8 +712,8 @@ function renderFieldEditor() {
     html += "<div class='input-group'><label>Organization</label><input type='text' id='editTitle' placeholder='e.g., Wonderful Hospital' value='" + esc(title) + "' /></div>";
     html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editOrg' placeholder='e.g., Director of marketing' value='" + esc(org) + "' /></div>";
     html += "<div class='input-group'><label>Work Email</label><input type='email' id='editEmail' placeholder='e.g., name@hospital.org' value='" + esc(email) + "' /></div>";
-    html += "<div class='input-group'><label>Phone Number</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
-    html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";
+html += "<div class='input-group'><label>Mobile / Work Phone</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
+  html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";
     
     html += "</div>";
 

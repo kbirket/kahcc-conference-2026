@@ -429,6 +429,22 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
       </div>
     </div>
     <div class="card">
+      <div class="card">
+  <div class="card-hdr"><span class="chi">🌻</span><h3>Our Kansas Community</h3></div>
+  <div class="card-body">
+    <div id="locationInputArea" style="text-align: center; margin-bottom: 15px;">
+      <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Enter your town to add your dot to the map!</p>
+      <div style="display: flex; gap: 5px; justify-content: center;">
+        <input type="text" id="attendeeTownInput" placeholder="e.g., Wichita" style="flex:1; max-width:150px; padding: 8px; border-radius: 8px; border: 1px solid var(--border); font-size:12px;">
+        <button onclick="APP.submitMyLocation()" style="background: var(--purple); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size:12px;">Place Dot!</button>
+      </div>
+    </div>
+    <div id="dotMapContainer" style="position: relative; width: 100%; aspect-ratio: 1.6/1; border-radius: 10px; border: 2px solid var(--gray); overflow: hidden; background: #fff;">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Kansas_counties_map.svg/1024px-Kansas_counties_map.svg.png" style="width: 100%; height: 100%; object-fit: contain; opacity: 0.6;">
+      <div id="mapDotLayer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
+    </div>
+  </div>
+</div>
       <div class="card-hdr"><span class="chi">&#128269;</span><h3>Find Attendees</h3></div>
       <div class="card-body">
         <input class="srch-box" type="text" id="attendeeSearch" placeholder="Search by name..." oninput="APP.searchAttendees()" />

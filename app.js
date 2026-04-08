@@ -595,8 +595,8 @@ function renderHunt(){
     // 1. Add the new "AI-nimal Selfie" title, Poster, and Guestcam inside the Hunt tab
     el.innerHTML="<div style='text-align: center; margin-bottom: 25px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);'>" +
                  "<h2 style='color:var(--purple); margin-bottom:15px; font-size: 24px;'>&#128247; AI-nimal Selfie Contest</h2>" +
-                 "<img src='YOUR_POSTER_IMAGE_URL.jpg' style='width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px;' alt='AI-nimal Museum Selfie Contest' />" +
-                 "<p style='font-size: 14px; color: #555; margin-bottom: 15px;'>Use the Guestcam below to snap your photo and transform into a wild animal. Save the image to your phone, then scroll down to upload it to the challenges below to earn points!</p>" +
+"<img src='AI-nimal%20Museum%20Selfie.png' style='width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px;' alt='AI-nimal Museum Selfie Contest' />"                 
+      "<p style='font-size: 14px; color: #555; margin-bottom: 15px;'>Use the Guestcam below to snap your photo and transform into a wild animal. Save the image to your phone, then scroll down to upload it to the challenges below to earn points!</p>" +
                  // The Guestcam embedded directly inside the tab
                  "<iframe src='https://guestcam.co/guest/0CMxmfHyNC' style='width: 100%; height: 600px; border: none; border-radius: 8px; background: #f0ecf8;' allow='camera; microphone'></iframe>" +
                  "</div>" +

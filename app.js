@@ -159,6 +159,36 @@ function openModal(key){
   document.getElementById("modalBody").innerHTML=s.body;
   document.getElementById("sessionModal").classList.add("open");
   document.body.style.overflow="hidden";
+  // Check if this session has a revealed poll and append results
+  var pollId=key;
+  get(ref(db,"revealedPolls/"+pollId)).then(function(snap){
+    if(snap.val()!==true)return;
+    get(ref(db,"pollResponses/"+pollId)).then(function(pSnap){
+      if(!pSnap.exists())return;
+      var responses=[];pSnap.forEach(function(c){responses.push(c.val());});
+      var rc=[0,0,0,0];var uc=[0,0,0];var takeaways=[];
+      responses.forEach(function(r){if(r.rating!==undefined)rc[r.rating]++;if(r.usage!==undefined)uc[r.usage]++;if(r.takeaway)takeaways.push(r.takeaway);});
+      var top=rc.indexOf(Math.max.apply(null,rc));
+      var topPct=responses.length?Math.round((rc[top]/responses.length)*100):0;
+      var isConf=pollId==="conference";
+      var uOpts=isConf?CONF_OPTS:USAGE_OPTS;var uEmojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
+      var q2lbl=isConf?"Recommend KAHCC?":"Use in next 30 days?";
+      var html="<div style='margin-top:16px;padding-top:16px;border-top:2px solid var(--border);'>";
+      html+="<div style='font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:1px;margin-bottom:10px;'>&#128202; Session Feedback ("+responses.length+" responses)</div>";
+      html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top rating: "+RATING_EMOJIS[top]+" "+RATING_OPTS[top]+" ("+topPct+"%)</div>";
+      html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:12px;'>";
+      RATING_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+RATING_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:10px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);font-size:11px;'>"+pct+"%</span></div>";});
+      html+="</div>";
+      html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>"+q2lbl+"</div>";
+      html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:12px;'>";
+      uOpts.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+uEmojis[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:10px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);font-size:11px;'>"+pct+"%</span></div>";});
+      html+="</div>";
+      if(takeaways.length){html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>Key Takeaways</div>";takeaways.slice(0,5).forEach(function(t){html+="<div style='font-size:12px;color:#444;line-height:1.5;padding:4px 0;border-bottom:1px solid #f0ecf8;font-style:italic;'>&#8220;"+esc(t)+"&#8221;</div>";});}
+      html+="</div>";
+      var mb=document.getElementById("modalBody");
+      if(mb)mb.innerHTML+=html;
+    });
+  });
 }
 function closeModal(){document.getElementById("sessionModal").classList.remove("open");document.body.style.overflow="";}
 function closeModalOutside(e){if(e.target.id==="sessionModal")closeModal();}

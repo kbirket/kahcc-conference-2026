@@ -938,12 +938,11 @@ function exportPDF(){
 
 // --- KANSAS MAP LOGIC ---
 
-APP.submitMyLocation = function() {
+function submitMyLocation() {
     const town = document.getElementById('attendeeTownInput').value.trim();
     if (!town) return;
 
     // A simple coordinate lookup for major KS areas to keep it fast/free
-    // If a town isn't here, it defaults to a random "Central KS" spot
     const ksCoords = {
         "wichita": {x: 65, y: 75}, "overland park": {x: 92, y: 35}, 
         "kansas city": {x: 92, y: 30}, "topeka": {x: 82, y: 32},
@@ -958,26 +957,25 @@ APP.submitMyLocation = function() {
     const lookup = town.toLowerCase();
     let pos = ksCoords[lookup] || { x: 40 + Math.random() * 20, y: 40 + Math.random() * 20 };
 
-    // Save to Firebase
-    const mapRef = window.firebaseDatabase.ref('mapLocations/' + APP.currentUser.uid);
-    mapRef.set({
+    // Save to Firebase using your specific db variable
+    set(ref(db, 'mapLocations/' + CU.uid), {
         town: town,
-        userName: APP.currentUser.displayName,
+        userName: CUD ? CUD.name : "Attendee",
         x: pos.x,
         y: pos.y,
         timestamp: Date.now()
     }).then(() => {
         document.getElementById('locationInputArea').innerHTML = `<p style="color:var(--easy); font-weight:bold;">📍 Added! See you in Salina!</p>`;
-        APP.showToast("Location added to map!");
+        showToast("Location added to map!");
     });
-};
+}
 
 // Listen for all dots in the database
-APP.initLiveMap = function() {
+function initLiveMap() {
     const mapLayer = document.getElementById('mapDotLayer');
-    const mapRef = window.firebaseDatabase.ref('mapLocations');
+    if (!mapLayer) return;
 
-    mapRef.on('value', (snapshot) => {
+    onValue(ref(db, 'mapLocations'), (snapshot) => {
         mapLayer.innerHTML = ''; // Clear and redraw
         const data = snapshot.val();
         if (!data) return;
@@ -991,7 +989,8 @@ APP.initLiveMap = function() {
             mapLayer.appendChild(dot);
         });
     });
-};
+}
+
 window.APP={
   signIn:function(){signInWithPopup(auth,provider).catch(function(e){showToast("Sign in failed: "+e.message);});},
   signOut:function(){signOut(auth);},
@@ -1030,5 +1029,7 @@ window.APP={
   exportPDF:exportPDF,
   renderDashboard:renderDashboard,
   submitQuestion:submitQuestion,
-  replyQuestion:replyQuestion
+  replyQuestion:replyQuestion,
+  submitMyLocation:submitMyLocation,
+  initLiveMap:initLiveMap
 };

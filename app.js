@@ -583,6 +583,25 @@ function submitPost(){
 }
 
 // CONNECT
+function uploadProfilePic(input) {
+    if (!CU || !input.files || !input.files[0]) return;
+    var file = input.files[0];
+    showToast("Uploading photo...");
+    
+    // Save to your Firebase Storage
+    var sr = sRef(storage, "profiles/" + CU.uid);
+    uploadBytes(sr, file).then(function(s) {
+        return getDownloadURL(s.ref);
+    }).then(function(url) {
+        // Save the URL to their user profile
+        CUD.photoUrl = url;
+        update(ref(db, "users/" + CU.uid), { photoUrl: url });
+        showToast("Photo saved!");
+        renderMyCard(); // Instantly update the card
+    }).catch(function(e) { 
+        showToast("Upload failed: " + e.message); 
+    });
+}
 function renderMyCard() {
     var el = document.getElementById("myCardDisplay");
     if (!el) return;
@@ -610,8 +629,16 @@ function renderMyCard() {
     // Assemble the VIP Card
     var html = "<div class='user-card-deliberate'>";
     html += "<div class='card-header-main'>";
-    html += "<div class='profile-circle'>" + (CUD.animal || "&#128062;") + "</div>";
-    html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(title) + "</p></div>";
+var avatarHTML = "";
+    if (CUD.photoUrl) {
+        avatarHTML = "<img src='" + CUD.photoUrl + "' style='width:100%;height:100%;border-radius:50%;object-fit:cover;' />";
+    } else if (CU.photoURL) {
+        avatarHTML = "<img src='" + CU.photoURL + "' style='width:100%;height:100%;border-radius:50%;object-fit:cover;' />";
+    } else {
+        avatarHTML = (CUD.animal || "&#128062;");
+    }
+    
+    html += "<div class='profile-circle' style='overflow:hidden;'>" + avatarHTML + "</div>";    html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(title) + "</p></div>";
     html += "</div>";
     html += "<hr style='border:0; border-top:1px solid rgba(255,255,255,0.2); margin:15px 0;'>";
     html += "<div class='card-details-grid'>";
@@ -655,7 +682,7 @@ function renderFieldEditor() {
     // Build the clean form with an editable Work Email box
     var html = "<div style='background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 15px;'>";
     html += "<p style='font-size: 12px; color: #666; margin-bottom: 15px; text-align: center;'>Update your digital business card details below.</p>";
-    
+    html += "<div class='input-group'><label>Profile Photo</label><input type='file' accept='image/*' onchange='APP.uploadProfilePic(this)' style='padding: 6px;' /></div>";
     html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editTitle' placeholder='e.g., Director of Marketing' value='" + esc(title) + "' /></div>";
     html += "<div class='input-group'><label>Organization</label><input type='text' id='editOrg' placeholder='e.g., Patterson Health Center' value='" + esc(org) + "' /></div>";
     html += "<div class='input-group'><label>Work Email</label><input type='email' id='editEmail' placeholder='e.g., name@hospital.org' value='" + esc(email) + "' /></div>";
@@ -1115,5 +1142,6 @@ window.APP={
   submitQuestion:submitQuestion,
   replyQuestion:replyQuestion,
   submitMyLocation:submitMyLocation,
+  uploadProfilePic:uploadProfilePic,
   initLiveMap:initLiveMap
 };

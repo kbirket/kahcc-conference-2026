@@ -1091,19 +1091,14 @@ const KS_TOWNS = {
 };
 
 function submitMyLocation() {
-  const townInput = document.getElementById('attendeeTownInput');
-  const townName = townInput.value.trim();
+  var townInput = document.getElementById('attendeeTownInput') || document.getElementById('townInput');
+  if (!townInput) return;
+  var townName = townInput.value.trim();
   if (!townName) return;
 
-  const lookup = townName.toLowerCase();
-  
-  // Look up coordinates, or pick a random spot in the middle if town is unknown
-  const pos = KS_TOWNS[lookup] || { 
-    x: 45 + Math.random() * 10, 
-    y: 45 + Math.random() * 10 
-  };
+  var lookup = townName.toLowerCase();
+  var pos = KS_TOWNS[lookup] || { x: 45 + Math.random() * 10, y: 45 + Math.random() * 10 };
 
-  // Save to Firebase
   const newLocRef = push(ref(db, 'mapLocations'));
   set(newLocRef, {
     userName: CUD.name || "Attendee",
@@ -1111,51 +1106,73 @@ function submitMyLocation() {
     x: pos.x,
     y: pos.y,
     uid: CU.uid
+  }).then(function() {
+    showToast("Pinned " + townName + " to the map!");
+    townInput.value = "";
   });
-
-  townInput.value = "";
-  showToast("Pinned " + townName + " to the map!");
 }
 
-window.APP={
-  signIn:function(){signInWithPopup(auth,provider).catch(function(e){showToast("Sign in failed: "+e.message);});},
-  signOut:function(){signOut(auth);},
-  switchTab:switchTab,
-  openModal:openModal,
-  closeModal:closeModal,
-  closeModalOutside:closeModalOutside,
-  showPoll:showPoll,
-  selPoll:selPoll,
-  submitPoll:submitPoll,
-  closePollModal:closePollModal,
-  closePollModalOutside:closePollModalOutside,
-  toggleAdminSection:toggleAdminSection,
-  unlockAdmin:unlockAdmin,
-  adminStartGame:adminStartGame,
-  adminNextRound:adminNextRound,
-  adminResetGame:adminResetGame,
-  clearAllTestData:clearAllTestData,
-  activatePoll:activatePoll,
-  closePollAdmin:closePollAdmin,
-  revealPoll:revealPoll,
-  answerQ:answerQ,
-  switchFeed:switchFeed,
-  submitPost:submitPost,
-  doReact:doReact,
-  doReply:doReply,
-  approveHunt:approveHunt,
-  toggleCardEdit:toggleCardEdit,
-  saveMyCard:saveMyCard,
-  searchAttendees:searchAttendees,
-  doConnect:doConnect,
-  downloadConnections:downloadConnections,
-  emailConnections:emailConnections,
-  uploadHunt:uploadHunt,
-  exportPDF:exportPDF,
-  renderDashboard:renderDashboard,
-  submitQuestion:submitQuestion,
-  replyQuestion:replyQuestion,
-  submitMyLocation:submitMyLocation,
-  uploadProfilePic:uploadProfilePic,
-  initLiveMap:initLiveMap
+function initLiveMap() {
+    const mapLayer = document.getElementById('mapDotLayer');
+    if (!mapLayer) return;
+    onValue(ref(db, 'mapLocations'), (snapshot) => {
+        mapLayer.innerHTML = ''; 
+        const data = snapshot.val();
+        if (!data) return;
+        Object.values(data).forEach(loc => {
+            const dot = document.createElement('div');
+            dot.className = 'map-dot';
+            dot.style.left = loc.x + '%';
+            dot.style.top = loc.y + '%';
+            const tooltip = document.createElement('div');
+            tooltip.className = 'dot-tooltip';
+            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
+            dot.appendChild(tooltip);
+            mapLayer.appendChild(dot);
+        });
+    });
+}
+
+// --- THE BRAIN OF THE APP (MUST BE AT THE VERY BOTTOM) ---
+window.APP = {
+  signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
+  signOut: function() { signOut(auth); },
+  switchTab: switchTab,
+  openModal: openModal,
+  closeModal: closeModal,
+  closeModalOutside: closeModalOutside,
+  showPoll: showPoll,
+  selPoll: selPoll,
+  submitPoll: submitPoll,
+  closePollModal: closePollModal,
+  closePollModalOutside: closeModalOutside,
+  toggleAdminSection: toggleAdminSection,
+  unlockAdmin: unlockAdmin,
+  adminStartGame: adminStartGame,
+  adminNextRound: adminNextRound,
+  adminResetGame: adminResetGame,
+  clearAllTestData: clearAllTestData,
+  activatePoll: activatePoll,
+  closePollAdmin: closePollAdmin,
+  revealPoll: revealPoll,
+  answerQ: answerQ,
+  switchFeed: switchFeed,
+  submitPost: submitPost,
+  doReact: doReact,
+  doReply: doReply,
+  approveHunt: approveHunt,
+  toggleCardEdit: toggleCardEdit,
+  saveMyCard: saveMyCard,
+  uploadProfilePic: uploadProfilePic,
+  searchAttendees: searchAttendees,
+  doConnect: doConnect,
+  downloadConnections: downloadConnections,
+  emailConnections: emailConnections,
+  uploadHunt: uploadHunt,
+  exportPDF: exportPDF,
+  renderDashboard: renderDashboard,
+  submitQuestion: submitQuestion,
+  replyQuestion: replyQuestion,
+  submitMyLocation: submitMyLocation,
+  initLiveMap: initLiveMap
 };

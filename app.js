@@ -10,14 +10,11 @@ const db=getDatabase(fapp);
 const storage=getStorage(fapp);
 const provider=new GoogleAuthProvider();
 
-// ANIMALS
 const ANIMALS=["&#127748;","&#128062;","&#129426;","&#128056;","&#128031;","&#128019;","&#128032;","&#128034;","&#128040;","&#129428;","&#127803;","&#129418;","&#128011;","&#128013;","&#128022;","&#129417;","&#128064;","&#128033;"];
 function getAnimal(uid){var n=0;for(var i=0;i<uid.length;i++)n+=uid.charCodeAt(i);return ANIMALS[n%ANIMALS.length];}
 
-// STATE
 var CU=null,CUD=null,curFeed="general",cardFields=[],myConns={},localAnswers={},localTimer=null,localTR=0,triviaUnsub=null;
 
-// POLLS CONFIG
 const POLLS=[
   {id:"truth",label:"The Truth Gone Wild!"},
   {id:"ai-habitat",label:"Explore the AI Habitat"},
@@ -34,7 +31,6 @@ const USAGE_EMOJIS=["&#9989;","&#129300;","&#10060;"];
 const CONF_OPTS=["Definitely","Probably","Not sure"];
 const CONF_EMOJIS=["&#128588;","&#128077;","&#129300;"];
 
-// TRIVIA DATA
 const ROUND_SECS=15*60,ADMIN_PASS="kahcc2026";
 const ROUNDS=[
   {zone:"Savanna",questions:[
@@ -50,22 +46,22 @@ const ROUNDS=[
   {zone:"Arctic",questions:[
     {d:"easy",pts:50,e:"&#127803;",q:"What do you call a baby kangaroo?",o:["Cub","Pup","Joey","Kit"],a:2,f:"A baby kangaroo is a joey - born the size of a jellybean!"},
     {d:"medium",pts:100,e:"&#129418;",q:"Which animal can sleep standing up thanks to a stay apparatus in its legs?",o:["Giraffe","Horse","Elephant","Flamingo"],a:1,f:"Horses have tendons that lock their legs in place so they can doze upright!"},
-    {d:"hard",pts:200,e:"&#128064;",q:"Octopuses have three hearts. What color is their blood?",o:["Red","Yellow","Blue","Clear"],a:2,f:"Octopus blood is blue! Copper-based hemocyanin works well in cold, low-oxygen water."}
+    {d:"hard",pts:200,e:"&#128064;",q:"Octopuses have three hearts. What color is their blood?",o:["Red","Yellow","Blue","Clear"],a:2,f:"Octopus blood is blue! Copper-based hemocyanin works well in cold low-oxygen water."}
   ]},
   {zone:"Deep Sea",questions:[
     {d:"easy",pts:50,e:"&#128031;",q:"What animal is nicknamed the King of the Jungle?",o:["Tiger","Jaguar","Leopard","Lion"],a:3,f:"Lions are the King - though they actually live in grasslands and savannas!"},
-    {d:"medium",pts:100,e:"&#128019;",q:"Koalas are not bears. What type of animal are they?",o:["Primate","Marsupial","Rodent","Monotreme"],a:1,f:"Koalas are marsupials, closely related to wombats. They sleep 22 hours a day!"},
-    {d:"hard",pts:200,e:"&#128011;",q:"Which animal has a tongue longer than its body and eats 35,000 insects a day?",o:["Giant Anteater","Chameleon","Frog","Sun Bear"],a:0,f:"The giant anteater tongue is 2 feet long and flicks 150 times per minute!"}
+    {d:"medium",pts:100,e:"&#128019;",q:"Koalas are not bears. What type of animal are they?",o:["Primate","Marsupial","Rodent","Monotreme"],a:1,f:"Koalas are marsupials closely related to wombats. They sleep 22 hours a day!"},
+    {d:"hard",pts:200,e:"&#128011;",q:"Which animal has a tongue longer than its body and eats 35000 insects a day?",o:["Giant Anteater","Chameleon","Frog","Sun Bear"],a:0,f:"The giant anteater tongue is 2 feet long and flicks 150 times per minute!"}
   ]},
   {zone:"Nocturnal House",questions:[
     {d:"easy",pts:50,e:"&#128040;",q:"Which black and white animal sprays sulfur as its defense?",o:["Badger","Panda","Skunk","Zebra"],a:2,f:"Skunks spray up to 10 feet with accuracy - detectable over a mile away!"},
     {d:"medium",pts:100,e:"&#128062;",q:"Which big cat cannot roar but can purr continuously on inhale and exhale?",o:["Snow Leopard","Cougar","Cheetah","Clouded Leopard"],a:2,f:"Cheetahs lack the specialized larynx that lets lions and tigers roar!"},
-    {d:"hard",pts:200,e:"&#128013;",q:"Which reptile rotates each eye independently and changes color to communicate?",o:["Gecko","Iguana","Chameleon","Skink"],a:2,f:"Chameleons have 360-degree vision from rotating eyes. Color change is communication, not camouflage!"}
+    {d:"hard",pts:200,e:"&#128013;",q:"Which reptile rotates each eye independently and changes color to communicate?",o:["Gecko","Iguana","Chameleon","Skink"],a:2,f:"Chameleons have 360-degree vision from rotating eyes. Color change is communication not camouflage!"}
   ]},
   {zone:"Reptile Den",questions:[
-    {d:"easy",pts:50,e:"&#128022;",q:"What is the only mammal capable of true sustained powered flight?",o:["Flying Squirrel","Sugar Glider","Bat","Colugo"],a:2,f:"Bats are the only truly flying mammals - over 1,400 species worldwide!"},
+    {d:"easy",pts:50,e:"&#128022;",q:"What is the only mammal capable of true sustained powered flight?",o:["Flying Squirrel","Sugar Glider","Bat","Colugo"],a:2,f:"Bats are the only truly flying mammals - over 1400 species worldwide!"},
     {d:"medium",pts:100,e:"&#129417;",q:"Komodo dragons are the largest lizards. Which country are they native to?",o:["Australia","Philippines","Indonesia","Papua New Guinea"],a:2,f:"Komodo dragons live only on Indonesian islands. They grow 10 feet long!"},
-    {d:"hard",pts:200,e:"&#128033;",q:"Which animal freezes completely solid in winter and revives perfectly in spring?",o:["Arctic Ground Squirrel","Wood Frog","Tardigrade","Painted Turtle"],a:1,f:"The wood frog uses glucose as antifreeze, freezes solid, and revives each spring!"}
+    {d:"hard",pts:200,e:"&#128033;",q:"Which animal freezes completely solid in winter and revives perfectly in spring?",o:["Arctic Ground Squirrel","Wood Frog","Tardigrade","Painted Turtle"],a:1,f:"The wood frog uses glucose as antifreeze freezes solid and revives each spring!"}
   ]}
 ];
 
@@ -84,16 +80,15 @@ const SESSIONS={
   "truth":{time:"Thursday | 1:15-2:15pm",title:"The Truth Gone Wild!",sub:"Patients tell us what we need to know",body:"<p>Following the popularity of the KHA Fall Convention patient panel, KAHCC is bringing patients back - this time shining a light directly on US. What are marketers doing well or not so well in connecting patients to health education and resources?</p>"},
   "ai-habitat":{time:"Thursday | 2:30-4:00pm",title:"Explore the AI Habitat",sub:"LIVE Podcast - AI Marketing Experts",body:"<div class='spk-chip'><div class='spk-icon'>&#127908;</div><div><div class='spk-name'>AI Marketing Experts</div><div class='spk-org'>Jennifer Crego, Chris Hunter, John Clendenning, Laura Sutherly, Brad Killgore</div></div></div><p>Thousands tune in weekly for the latest AI tips. KAHCC gets to be part of a LIVE podcast sharing top tactics to multiply reach and results.</p>"},
   "talk20-thu":{time:"Thursday | 5:00-5:30pm",title:"Talk 20 Sessions",sub:"All Killer, No Filler",body:"<ul class='blist'><li><strong>Build an App for That</strong> - Kristen Birket, Patterson Health</li><li><strong>Ads for Pennies on the Dollar</strong> - Bryce Dolan, Clay County Memorial</li></ul>"},
-  "dinner":{time:"Thursday | 5:30-8:30pm",title:"Dinner and Member Meeting",sub:"Museum Mixer - A Social Safari",body:"<ul class='blist'><li><strong>Watering Hole:</strong> Cash bar and networking</li><li><strong>Museum Prowl:</strong> Scavenger hunt through the museum</li><li><strong>AI-nimal Selfie Contest</strong></li><li><strong>Trivia Trek:</strong> Live mobile trivia challenge</li><li><strong>Creation Center:</strong> Art in the Wild</li><li><strong>Grazing Along the Safari:</strong> Treats from Lucindas Katering, Abilene KS</li></ul><p>KAHCC Membership Meeting during dinner.</p>"},
+  "dinner":{time:"Thursday | 5:30-8:30pm",title:"Dinner and Member Meeting",sub:"Museum Mixer - A Social Safari",body:"<ul class='blist'><li><strong>Watering Hole:</strong> Cash bar and networking</li><li><strong>Museum Prowl:</strong> Scavenger hunt through the museum</li><li><strong>AI-nimal Selfie Contest</strong></li><li><strong>Trivia Trek:</strong> Live mobile trivia challenge</li><li><strong>Creation Center:</strong> Art in the Wild</li><li><strong>Grazing Along the Safari:</strong> Treats from Lucindas Katering Abilene KS</li></ul><p>KAHCC Membership Meeting during dinner.</p>"},
   "kha":{time:"Friday | 8:30-9:00am",title:"KHA Advocacy Update",sub:"Kansas Hospital Association",body:"<div class='spk-chip'><div class='spk-icon'>&#127963;</div><div><div class='spk-name'>Jaron Caffrey</div><div class='spk-org'>KHA Director of Workforce and Health Care Policy</div></div></div><p>State and federal healthcare legislation update and how you can support positive decisions with your legislators.</p>"},
   "talk20-fri":{time:"Friday | 9:00-10:15am",title:"Talk 20s - Friday",sub:"Multiple presenters",body:"<ul class='blist'><li><strong>Winning Wisdom: 2025 Emeralds Best In Show</strong> - Shelly Conrady, NMC Health</li><li><strong>Creative Patient Solutions</strong> - Clay County General Public Transportation</li></ul>"},
   "chris":{time:"Friday | 10:30am-12pm",title:"Work Smarter, Not Harder: Mastering AI for Healthcare Marketing",sub:"Keynote",body:"<div class='spk-chip'><div class='spk-icon'>&#127942;</div><div><div class='spk-name'>Chris N. Cheetham-West, MBA</div><div class='spk-org'>International Speaker, Author, Former Google Team Member</div></div></div><ul class='blist'><li>Practical step-by-step AI workflow you can implement today</li><li>Free and low-cost AI toolkit for healthcare marketers</li><li>Real-world case studies from healthcare organizations</li><li>How to get found when patients search using AI</li></ul>"},
-  "emerald":{time:"Friday | 12:15-2:00pm",title:"Emerald Awards and Luncheon",sub:"Sponsored by Onspire Health Marketing",body:"<div class='spk-chip'><div class='spk-icon'>&#128081;</div><div><div class='spk-name'>Sarah Hancock</div><div class='spk-org'>New Boston Creative Group</div></div></div><p>Celebrate the creativity and success of your fellow healthcare communicators at the annual Emerald Awards, sponsored by Onspire Health Marketing.</p>"}
+  "emerald":{time:"Friday | 12:15-2:00pm",title:"Emerald Awards and Luncheon",sub:"Sponsored by Onspire Health Marketing",body:"<div class='spk-chip'><div class='spk-icon'>&#128081;</div><div><div class='spk-name'>Sarah Hancock</div><div class='spk-org'>New Boston Creative Group</div></div></div><p>Celebrate the creativity and success of your fellow healthcare communicators at the annual Emerald Awards sponsored by Onspire Health Marketing.</p>"}
 };
 
-// UTILS
 function esc(s){return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
-function showToast(msg){var t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2500);}
+function showToast(msg){var t=document.getElementById("toast");if(!t)return;t.textContent=msg;t.classList.add("show");setTimeout(function(){t.classList.remove("show");},2500);}
 function fmtTime(ts){var d=Math.floor((Date.now()-(ts||0))/1000);if(d<60)return"just now";if(d<3600)return Math.floor(d/60)+"m ago";if(d<86400)return Math.floor(d/3600)+"h ago";return Math.floor(d/86400)+"d ago";}
 
 // AUTH
@@ -142,7 +137,6 @@ function refresh(){
   if(id==="tab-dashboard")renderDashboard();
 }
 
-// TAB NAV
 function switchTab(name){
   document.querySelectorAll(".tab-panel").forEach(function(p){p.classList.remove("active");});
   document.querySelectorAll(".nav-tab").forEach(function(t){t.classList.remove("active");});
@@ -157,7 +151,6 @@ function switchTab(name){
   if(name==="dashboard")renderDashboard();
 }
 
-// MODAL
 function openModal(key){
   var s=SESSIONS[key];if(!s)return;
   document.getElementById("modalTime").textContent=s.time;
@@ -169,6 +162,28 @@ function openModal(key){
 }
 function closeModal(){document.getElementById("sessionModal").classList.remove("open");document.body.style.overflow="";}
 function closeModalOutside(e){if(e.target.id==="sessionModal")closeModal();}
+
+// POLL MODAL - stays on schedule page
+function openPollModal(html){
+  var el=document.getElementById("pollModalBody");
+  var ov=document.getElementById("pollModal");
+  if(!el||!ov)return;
+  el.innerHTML=html;
+  ov.classList.add("open");
+  document.body.style.overflow="hidden";
+}
+function closePollModal(){
+  var ov=document.getElementById("pollModal");
+  if(ov)ov.classList.remove("open");
+  document.body.style.overflow="";
+}
+function closePollModalOutside(e){if(e.target.id==="pollModal")closePollModal();}
+
+// ADMIN SECTION TOGGLE (Info tab)
+function toggleAdminSection(){
+  var b=document.getElementById("adminSectionBody");
+  if(b)b.style.display=b.style.display==="none"?"block":"none";
+}
 
 // POLLS
 function checkActivePoll(){
@@ -182,81 +197,47 @@ function checkActivePoll(){
 onValue(ref(db,"activePoll"),function(){checkActivePoll();});
 
 function showPoll(pid){
-  renderPollUI(pid);
-}
-
-function renderPollControls(){
-  var el=document.getElementById("pollControls");if(!el)return;
-  var html="";
-  POLLS.forEach(function(p){
-    html+="<div style='padding:5px 0;border-bottom:1px solid #f0ecf8;'>";
-    html+="<div style='font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;'>"+esc(p.label)+"</div>";
-    html+="<div style='display:flex;gap:4px;flex-wrap:wrap;'>";
-    html+="<button class='adm-btn adm-green' style='font-size:10px;padding:3px 7px;' onclick=\"APP.activatePoll('"+p.id+"')\">&#9654; Open</button>";
-    html+="<button class='adm-btn adm-red' style='font-size:10px;padding:3px 7px;' onclick='APP.closePoll()'>&#9632; Close</button>";
-    html+="<button class='adm-btn adm-blue' style='font-size:10px;padding:3px 7px;' onclick=\"APP.revealPoll('"+p.id+"')\">&#128065; Reveal</button>";
-    html+="</div></div>";
-  });
-  el.innerHTML=html;
-}
-
-function activatePoll(pid){set(ref(db,"activePoll"),pid);set(ref(db,"revealedPolls/"+pid),false);showToast("Poll opened!");}
-function closePoll(){remove(ref(db,"activePoll"));showToast("Poll closed.");}
-function revealPoll(pid){set(ref(db,"revealedPolls/"+pid),true);showToast("Results revealed!");}
-
-function renderPollUI(pollId){
-  var poll=POLLS.find(function(p){return p.id===pollId;});if(!poll)return;
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
-  if(!CU){el.innerHTML="<div class='wait-card'><p>Sign in to rate sessions!</p></div>";return;}
-  Promise.all([get(ref(db,"pollResponses/"+pollId+"/"+CU.uid)),get(ref(db,"revealedPolls/"+pollId))]).then(function(res){
+  var poll=POLLS.find(function(p){return p.id===pid;});if(!poll)return;
+  if(!CU){openPollModal("<div style='padding:20px;text-align:center;font-size:13px;color:#666;'>Please sign in to rate sessions!</div>");return;}
+  Promise.all([get(ref(db,"pollResponses/"+pid+"/"+CU.uid)),get(ref(db,"revealedPolls/"+pid))]).then(function(res){
     var already=res[0].exists();var revealed=res[1].val()===true;
-    if(already||revealed){renderPollResults(pollId,poll,revealed);return;}
-    var isConf=pollId==="conference";
-    var html="<div class='poll-banner'><h3>&#128203; "+esc(poll.label)+"</h3><p>Your feedback goes straight to the KAHCC board!</p></div>";
-    html+="<div class='poll-card'><div class='poll-q'>Overall rating</div><div class='poll-opts' id='po-rating'>";
-    RATING_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+RATING_EMOJIS[i]+" "+o+"</div>";});
-    html+="</div></div>";
-    var q2opts=isConf?CONF_OPTS:USAGE_OPTS;var q2emojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
-    var q2lbl=isConf?"Would you recommend KAHCC membership to a colleague?":"Will you use something from this session in the next 30 days?";
-    html+="<div class='poll-card'><div class='poll-q'>"+q2lbl+"</div><div class='poll-opts' id='po-usage'>";
-    q2opts.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+q2emojis[i]+" "+o+"</div>";});
-    html+="</div></div>";
-    if(isConf){html+="<div class='poll-card'><div class='poll-q'>What topic would you most like at the next conference?</div><textarea class='poll-textarea' id='po-topic' placeholder='Your suggestion...'></textarea></div>";}
-    html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
-    html+="<button class='poll-submit' onclick=\"APP.submitPoll('"+pollId+"')\">Submit Feedback &#8250;</button>";
-    el.innerHTML=html;
+    if(already||revealed){openPollModal(buildPollResultsHTML(pid,poll,null,revealed));loadPollResultsIntoModal(pid,poll,revealed);return;}
+    openPollModal(buildPollFormHTML(pid,poll));
     window._pollSel={};
   });
 }
 
-function selPoll(group,idx){
-  window._pollSel=window._pollSel||{};
-  window._pollSel[group]=idx;
-  document.querySelectorAll("#po-"+group+" .poll-opt").forEach(function(o,i){o.className="poll-opt"+(i===idx?" sel":"");});
+function buildPollFormHTML(pid,poll){
+  var isConf=pid==="conference";
+  var html="<div class='poll-banner'><h3>&#128203; "+esc(poll.label)+"</h3><p>Your feedback goes straight to the KAHCC board!</p></div>";
+  html+="<div class='poll-card'><div class='poll-q'>Overall rating</div><div class='poll-opts' id='po-rating'>";
+  RATING_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+RATING_EMOJIS[i]+" "+o+"</div>";});
+  html+="</div></div>";
+  var q2opts=isConf?CONF_OPTS:USAGE_OPTS;var q2emojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
+  var q2lbl=isConf?"Would you recommend KAHCC membership to a colleague?":"Will you use something from this session in the next 30 days?";
+  html+="<div class='poll-card'><div class='poll-q'>"+q2lbl+"</div><div class='poll-opts' id='po-usage'>";
+  q2opts.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+q2emojis[i]+" "+o+"</div>";});
+  html+="</div></div>";
+  if(isConf){html+="<div class='poll-card'><div class='poll-q'>What topic would you most like at the next conference?</div><textarea class='poll-textarea' id='po-topic' placeholder='Your suggestion...'></textarea></div>";}
+  html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
+  html+="<button class='poll-submit' onclick=\"APP.submitPoll('"+pid+"')\">Submit Feedback &#8250;</button>";
+  return html;
 }
 
-function submitPoll(pollId){
-  if(!CU)return;
-  window._pollSel=window._pollSel||{};
-  if(window._pollSel["rating"]===undefined||window._pollSel["usage"]===undefined){showToast("Please answer all questions!");return;}
-  var takeaway=document.getElementById("po-takeaway")?document.getElementById("po-takeaway").value.trim():"";
-  var topic=document.getElementById("po-topic")?document.getElementById("po-topic").value.trim():"";
-  var data={rating:window._pollSel["rating"],usage:window._pollSel["usage"],takeaway:takeaway,name:CUD?CUD.name:"Attendee",ts:Date.now()};
-  if(topic)data.topic=topic;
-  set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";
-  if(el)el.innerHTML="<div class='poll-done'>&#9989; Thank you! Your feedback has been submitted.</div>";
-  showToast("Feedback submitted!");
+function buildPollResultsHTML(pid,poll,responses,revealed){
+  var html="<div class='poll-banner' style='background:linear-gradient(135deg,var(--purple),var(--purple-light));'><h3>&#128202; "+esc(poll.label)+"</h3><p>Loading results...</p></div>";
+  if(!revealed)html+="<div class='poll-done' style='background:#fff3e0;color:var(--medium);'>&#9203; Results will be revealed shortly.</div>";
+  return html;
 }
 
-function renderPollResults(pollId,poll,revealed){
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
-  get(ref(db,"pollResponses/"+pollId)).then(function(snap){
-    if(!snap.exists()){el.innerHTML="<div class='wait-card'><p>No responses yet.</p></div>";return;}
+function loadPollResultsIntoModal(pid,poll,revealed){
+  get(ref(db,"pollResponses/"+pid)).then(function(snap){
+    var el=document.getElementById("pollModalBody");if(!el)return;
+    if(!snap.exists()){el.innerHTML="<div style='padding:20px;text-align:center;font-size:13px;color:#999;'>No responses yet.</div>";return;}
     var responses=[];snap.forEach(function(c){responses.push(c.val());});
     var rc=[0,0,0,0];var uc=[0,0,0];var takeaways=[];
     responses.forEach(function(r){if(r.rating!==undefined)rc[r.rating]++;if(r.usage!==undefined)uc[r.usage]++;if(r.takeaway)takeaways.push(r.takeaway);});
-    var isConf=pollId==="conference";var q2opts=isConf?CONF_OPTS:USAGE_OPTS;var q2emojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
+    var isConf=pid==="conference";var q2opts=isConf?CONF_OPTS:USAGE_OPTS;var q2emojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
     var html="<div class='poll-banner' style='background:linear-gradient(135deg,var(--purple),var(--purple-light));'><h3>&#128202; "+esc(poll.label)+"</h3><p>"+responses.length+" response"+(responses.length!==1?"s":"")+" received</p></div>";
     html+="<div class='poll-card'><div class='poll-q'>Overall Rating</div>";
     RATING_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div class='poll-bar-row'><span class='poll-bar-lbl'>"+RATING_EMOJIS[i]+" "+o+"</span><div class='poll-bar-track'><div class='poll-bar-fill' style='width:"+pct+"%'></div></div><span class='poll-bar-pct'>"+pct+"%</span></div>";});
@@ -270,20 +251,59 @@ function renderPollResults(pollId,poll,revealed){
   });
 }
 
+function selPoll(group,idx){
+  window._pollSel=window._pollSel||{};
+  window._pollSel[group]=idx;
+  var opts=document.querySelectorAll("#po-"+group+" .poll-opt");
+  opts.forEach(function(o,i){o.className="poll-opt"+(i===idx?" sel":"");});
+}
+
+function submitPoll(pollId){
+  if(!CU)return;
+  window._pollSel=window._pollSel||{};
+  if(window._pollSel["rating"]===undefined||window._pollSel["usage"]===undefined){showToast("Please answer all questions!");return;}
+  var takeaway=document.getElementById("po-takeaway")?document.getElementById("po-takeaway").value.trim():"";
+  var topic=document.getElementById("po-topic")?document.getElementById("po-topic").value.trim():"";
+  var data={rating:window._pollSel["rating"],usage:window._pollSel["usage"],takeaway:takeaway,name:CUD?CUD.name:"Attendee",ts:Date.now()};
+  if(topic)data.topic=topic;
+  set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
+  var el=document.getElementById("pollModalBody");
+  if(el)el.innerHTML="<div style='padding:30px 20px;text-align:center;'><div style='font-size:48px;margin-bottom:12px;'>&#9989;</div><div class='poll-done'>Thank you! Your feedback has been submitted to the board.</div></div>";
+  showToast("Feedback submitted!");
+}
+
+function renderPollControls(){
+  var el=document.getElementById("pollControls");if(!el)return;
+  var html="";
+  POLLS.forEach(function(p){
+    html+="<div style='padding:5px 0;border-bottom:1px solid #f0ecf8;'>";
+    html+="<div style='font-size:11px;font-weight:700;color:var(--text);margin-bottom:4px;'>"+esc(p.label)+"</div>";
+    html+="<div style='display:flex;gap:4px;flex-wrap:wrap;'>";
+    html+="<button class='adm-btn adm-green' style='font-size:10px;padding:3px 7px;' onclick=\"APP.activatePoll('"+p.id+"')\">&#9654; Open</button>";
+    html+="<button class='adm-btn adm-red' style='font-size:10px;padding:3px 7px;' onclick='APP.closePollAdmin()'>&#9632; Close</button>";
+    html+="<button class='adm-btn adm-blue' style='font-size:10px;padding:3px 7px;' onclick=\"APP.revealPoll('"+p.id+"')\">&#128065; Reveal</button>";
+    html+="</div></div>";
+  });
+  el.innerHTML=html;
+}
+
+function activatePoll(pid){set(ref(db,"activePoll"),pid);set(ref(db,"revealedPolls/"+pid),false);showToast("Poll opened!");}
+function closePollAdmin(){remove(ref(db,"activePoll"));showToast("Poll closed.");}
+function revealPoll(pid){set(ref(db,"revealedPolls/"+pid),true);showToast("Results revealed!");}
+
 // TRIVIA
 function renderTriviaGame(){
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
+  var el=document.getElementById("triviaGame");if(!el)return;
   if(triviaUnsub){triviaUnsub();triviaUnsub=null;}
   triviaUnsub=onValue(ref(db,"gameState"),function(snap){
     var gs=snap.val()||{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS};
     renderTriviaUI(gs);
   });
-  renderPollControls();checkActivePoll();
 }
 
 function renderTriviaUI(gs){
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
-  if(gs.gameOver){renderGameOver(gs);return;}
+  var el=document.getElementById("triviaGame");if(!el)return;
+  if(gs.gameOver){renderGameOver();return;}
   if(!gs.started){el.innerHTML="<div class='wait-card'><div class='wait-icon'>&#128062;</div><h3>Game Not Started Yet</h3><p>Trivia Trek begins during the Museum Mixer Thursday evening. Get ready!</p></div>";return;}
   if(gs.currentRound<0){el.innerHTML="<div class='wait-card'><div class='wait-icon'>&#9201;</div><h3>Get Ready!</h3><p>Round 1 drops soon. Sign in to play!</p></div>"+lbHTML();return;}
   var html="";
@@ -313,8 +333,7 @@ function renderTriviaUI(gs){
     var dc=q.d==="easy"?"ec":q.d==="medium"?"mc":"hc";
     var dd=q.d==="easy"?"de":q.d==="medium"?"dm":"dh";
     var cap=q.d.charAt(0).toUpperCase()+q.d.slice(1);
-    html+="<div class='qcard "+dc+"'>";
-    html+="<div class='qmeta'><div class='diff-badge "+dd+"'>"+q.e+" "+cap+"</div><div class='pts-badge'>"+(done&&ans.ok?"+"+q.pts+" earned!":"+"+q.pts+" pts")+"</div></div>";
+    html+="<div class='qcard "+dc+"'><div class='qmeta'><div class='diff-badge "+dd+"'>"+q.e+" "+cap+"</div><div class='pts-badge'>"+(done&&ans.ok?"+"+q.pts+" earned!":"+"+q.pts+" pts")+"</div></div>";
     html+="<div class='qtext'>"+esc(q.q)+"</div><div class='qopts'>";
     q.o.forEach(function(opt,i){
       var cls="qopt";
@@ -368,7 +387,7 @@ function loadLeaderboard(){
 }
 
 function renderGameOver(){
-  var el=document.getElementById("pollModalBody"); document.getElementById("pollModal").classList.add("open"); document.body.style.overflow="hidden";if(!el)return;
+  var el=document.getElementById("triviaGame");if(!el)return;
   var myScore=CUD?CUD.score:0;
   var maxPts=ROUNDS.reduce(function(s,r){return s+r.questions.reduce(function(ss,q){return ss+q.pts;},0);},0);
   el.innerHTML="<div class='game-over'><div class='trophy'>&#127942;</div><h2>Trivia Trek Complete!</h2>"+(CU?"<p>Your final score:</p><div class='final-score'>"+myScore+"</div><p style='margin-top:5px;font-size:11px;color:var(--gold-light);'>out of "+maxPts+" pts</p>":"<p>Thanks for watching!</p>")+"</div>"+lbHTML();
@@ -382,12 +401,18 @@ function answerQ(ri,qi,chosen){
   if(ok){var bonus=Math.floor((localTR/ROUND_SECS)*q.pts*0.25);var ns=(CUD.score||0)+q.pts+bonus;CUD.score=ns;update(ref(db,"users/"+CU.uid),{score:ns});}
   get(ref(db,"gameState")).then(function(snap){renderTriviaUI(snap.val()||{});});
 }
+
 // ADMIN
-function toggleAdm(){document.getElementById("adminPanel").classList.toggle("open");}
 function unlockAdmin(){
   var v=document.getElementById("adminPassInput").value;
-  if(v===ADMIN_PASS){document.getElementById("adminLock").style.display="none";document.getElementById("adminControls").style.display="block";updateAdmStatus();renderPollControls();renderAdminHunt();}
-  else{document.getElementById("adminPassInput").value="";document.getElementById("adminPassInput").placeholder="Wrong password...";}
+  if(v===ADMIN_PASS){
+    document.getElementById("adminLock").style.display="none";
+    document.getElementById("adminControls").style.display="block";
+    updateAdmStatus();renderPollControls();renderAdminHunt();
+  }else{
+    document.getElementById("adminPassInput").value="";
+    document.getElementById("adminPassInput").placeholder="Wrong password...";
+  }
 }
 function updateAdmStatus(){
   get(ref(db,"gameState")).then(function(snap){
@@ -410,43 +435,33 @@ function adminNextRound(){
 }
 function adminResetGame(){localAnswers={};set(ref(db,"gameState"),{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS});updateAdmStatus();}
 
-// Render the pending Scavenger Hunt submissions for Admins
 function renderAdminHunt(){
   var el=document.getElementById("adminHuntApproval");if(!el)return;
   onValue(ref(db,"huntPending"),function(snap){
-    if(!snap.exists()){el.innerHTML="<p style='font-size:12px;'>No pending hunt submissions.</p>";return;}
-    var html="<h3 style='font-size:14px; margin-bottom:10px;'>&#128247; Pending Hunt Approvals</h3>";
+    if(!snap.exists()){el.innerHTML="<p style='font-size:12px;color:#888;'>No pending hunt submissions.</p>";return;}
+    var html="<div class='sec-hdr'>&#128247; Pending Hunt Approvals</div>";
     snap.forEach(function(c){
       var d=c.val();
-      html+="<div style='background:#f9f9f9; padding:10px; margin-bottom:10px; border-radius:5px;'>";
-      html+="<div style='font-weight:bold; font-size:12px;'>"+esc(d.name)+"</div>";
-      html+="<div style='font-size:11px; color:#666; margin-bottom:5px;'>"+esc(d.chTitle)+" ("+d.pts+" pts)</div>";
-      html+="<img src='"+d.url+"' style='width:100%; max-width:200px; border-radius:4px; margin-bottom:5px;' />";
-      html+="<br><button class='adm-btn adm-green' onclick=\"APP.approveHunt('"+d.uid+"','"+d.chId+"',"+d.pts+")\">&#9989; Approve & Award "+d.pts+" pts</button>";
+      html+="<div style='background:#f9f9f9;padding:10px;margin-bottom:10px;border-radius:8px;'>";
+      html+="<div style='font-weight:bold;font-size:12px;'>"+esc(d.name)+"</div>";
+      html+="<div style='font-size:11px;color:#666;margin-bottom:5px;'>"+esc(d.chTitle)+" (+"+d.pts+" pts)</div>";
+      html+="<img src='"+d.url+"' style='width:100%;max-width:200px;border-radius:4px;margin-bottom:5px;' />";
+      html+="<br><button class='adm-btn adm-green' style='margin-top:5px;' onclick=\"APP.approveHunt('"+d.uid+"','"+d.chId+"',"+d.pts+")\">&#9989; Approve +"+d.pts+" pts</button>";
       html+="</div>";
     });
     el.innerHTML=html;
   });
 }
 
-// Approve a submission, add points to the user, and clear from queue
-function approveHunt(uid, chId, pts){
-  // 1. Mark the specific hunt challenge as approved
-  update(ref(db,"hunt/"+uid+"/"+chId), {approved: true});
-  
-  // 2. Fetch the user's current score and add the new points
+function approveHunt(uid,chId,pts){
+  update(ref(db,"hunt/"+uid+"/"+chId),{approved:true});
   get(ref(db,"users/"+uid)).then(function(snap){
-    if(snap.exists()){
-      var u = snap.val();
-      var newScore = (u.score || 0) + pts;
-      update(ref(db,"users/"+uid), {score: newScore});
-    }
+    if(snap.exists()){var u=snap.val();update(ref(db,"users/"+uid),{score:(u.score||0)+pts});}
   });
-  
-  // 3. Remove it from the pending queue
   remove(ref(db,"huntPending/"+uid+"_"+chId));
   showToast("Approved! Points awarded.");
 }
+
 // COMMUNITY
 var REACTS=["&#127748;","&#128062;","&#129426;","&#128056;","&#127803;"];
 var RNAMES=["Lion","Zebra","Cheetah","Frog","Flower"];
@@ -482,7 +497,7 @@ function buildPostCard(p,feed){
   var reactHTML="";
   REACTS.forEach(function(emoji,i){
     var rk=RNAMES[i];var cnt=reacts[rk]?Object.keys(reacts[rk]).length:0;var iR=uid&&reacts[rk]&&reacts[rk][uid];
-    reactHTML+="<button class='react-btn"+(iR?" reacted":"")+"' onclick=\"APP.doReact('"+feed+"','"+p._key+"','"+rk+"')\">"+emoji+" <span class='react-count'>"+(cnt||"")+" </span></button>";
+    reactHTML+="<button class='react-btn"+(iR?" reacted":"")+"' onclick=\"APP.doReact('"+feed+"','"+p._key+"','"+rk+"')\">"+emoji+" <span class='react-count'>"+(cnt||"")+"</span></button>";
   });
   var replies=p.replies||{};var rItems=Object.values(replies).sort(function(a,b){return(a.ts||0)-(b.ts||0);});
   var rHTML=rItems.map(function(r){return"<div class='reply-item'><div class='reply-av'>"+(r.animal||"&#128062;")+"</div><div><div class='reply-author'>"+esc(r.name||"")+"</div><div class='reply-text'>"+esc(r.text||"")+"</div></div></div>";}).join("");
@@ -543,7 +558,7 @@ function searchAttendees(){
   get(ref(db,"users")).then(function(snap){
     if(!snap.exists()){el.innerHTML="<div class='feed-empty'>No attendees found.</div>";return;}
     var results=[];
-    snap.forEach(function(c){var d=c.val();if(d.name&&d.name.toLowerCase().includes(q)&&d.uid!==CU?.uid)results.push(d);});
+    snap.forEach(function(c){var d=c.val();if(d.name&&d.name.toLowerCase().includes(q)&&(!CU||d.uid!==CU.uid))results.push(d);});
     if(!results.length){el.innerHTML="<div class='feed-empty'>No attendees found.</div>";return;}
     el.innerHTML=results.slice(0,10).map(function(a){
       var org=a.card&&a.card.fields&&a.card.fields.find(function(f){return f.label.toLowerCase().includes("org");});
@@ -587,21 +602,15 @@ function emailConnections(){
 function renderHunt(){
   var el=document.getElementById("huntChallenges");if(!el)return;
   if(!CU){el.innerHTML="<div class='wait-card'><p>Sign in to participate in the hunt!</p></div>";return;}
-  
   get(ref(db,"hunt/"+CU.uid)).then(function(snap){
     var mh=snap.val()||{};
-    
-    // 1. Add the new "AI-nimal Selfie" title, Poster, and Guestcam inside the Hunt tab
-    el.innerHTML="<div style='text-align: center; margin-bottom: 25px; padding: 15px; background: #fff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);'>" +
-                 "<h2 style='color:var(--purple); margin-bottom:15px; font-size: 24px;'>&#128247; AI-nimal Selfie Contest</h2>" +
-                 "<img src='AI-nimalMuseumSelfie.png' style='width: 100%; max-width: 400px; border-radius: 8px; margin-bottom: 15px;' alt='AI-nimal Museum Selfie Contest' onerror=\"this.style.display='none'\" />" +
-                 "<p style='font-size: 14px; color: #555; margin-bottom: 15px;'><strong>Step 1:</strong> Use the Guestcam below to snap your photo and transform into a wild animal. Save the image to your phone.<br><br><strong>Step 2:</strong> Scroll down to the challenges below and upload your saved photo to earn points!</p>" +
-                 // The Guestcam embedded directly inside the tab
-                 "<iframe src='https://guestcam.co/guest/0CMxmfHyNC' style='width: 100%; height: 600px; border: 2px solid var(--purple); border-radius: 8px; background: #f0ecf8;' allow='camera; microphone'></iframe>" +
-                 "</div>" +
-                 "<h3 style='margin: 0 0 15px 0; color: var(--text); font-size: 18px;'>&#128269; Hunt Challenges</h3>";
-                 
-    // 2. Loop through all of your original challenges
+    el.innerHTML="<div style='text-align:center;margin-bottom:25px;padding:15px;background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,0.05);'>"
+      +"<h2 style='color:var(--purple);margin-bottom:15px;font-size:24px;'>&#128247; AI-nimal Selfie Contest</h2>"
+      +"<img src='AI-nimalMuseumSelfie.png' style='width:100%;max-width:400px;border-radius:8px;margin-bottom:15px;' alt='AI-nimal Museum Selfie Contest' onerror=\"this.style.display='none'\" />"
+      +"<p style='font-size:14px;color:#555;margin-bottom:15px;'><strong>Step 1:</strong> Use the Guestcam below to snap your photo and transform into a wild animal. Save the image to your phone.<br><br><strong>Step 2:</strong> Scroll down to the challenges below and upload your saved photo to earn points!</p>"
+      +"<iframe src='https://guestcam.co/guest/0CMxmfHyNC' style='width:100%;height:600px;border:2px solid var(--purple);border-radius:8px;background:#f0ecf8;' allow='camera; microphone'></iframe>"
+      +"</div>"
+      +"<h3 style='margin:0 0 15px 0;color:var(--text);font-size:18px;'>&#128269; Hunt Challenges</h3>";
     CHALLENGES.forEach(function(ch){
       var sub=mh[ch.id];var div=document.createElement("div");div.className="ch-card";
       var sHTML=sub?(sub.approved?"<div class='ch-approved'>&#9989; Approved! +"+ch.pts+" pts</div>":"<div class='ch-pending'>&#9203; Pending admin approval...</div>"):"<label class='upload-btn' style='display:block;text-align:center;padding:9px;' for='upl_"+ch.id+"'>&#128247; Upload Photo<input type='file' id='upl_"+ch.id+"' accept='image/*' style='display:none;' onchange=\"APP.uploadHunt('"+ch.id+"',this)\" /></label>";
@@ -705,7 +714,6 @@ function exportPDF(){
     var jspdf=window.jspdf;var doc=new jspdf.jsPDF({orientation:"portrait",unit:"mm",format:"a4"});
     var W=210,margin=18,y=0;
     function txt(t,x,yy,size,bold,color){doc.setFontSize(size||11);doc.setFont("helvetica",bold?"bold":"normal");doc.setTextColor(color?color[0]:30,color?color[1]:10,color?color[2]:48);doc.text(String(t),x,yy);}
-    // COVER
     doc.setFillColor(45,19,80);doc.rect(0,0,W,297,"F");
     doc.setFillColor(232,130,10);doc.rect(0,100,W,6,"F");
     txt("KAHCC",W/2,55,48,true,[255,255,255]);
@@ -715,7 +723,6 @@ function exportPDF(){
     txt("POST-EVENT REPORT",W/2,115,16,true,[255,255,255]);
     doc.setFontSize(11);doc.setTextColor(200,168,75);doc.text("April 23-24, 2026  |  Rolling Hills Zoo, Salina, KS",W/2,128,{align:"center"});
     doc.setFontSize(9);doc.setTextColor(150,130,190);doc.text("Generated by the KAHCC Innovation Conference App",W/2,200,{align:"center"});
-    // PAGE 2
     doc.addPage();
     doc.setFillColor(74,32,128);doc.rect(0,0,W,22,"F");
     txt("AT A GLANCE",margin,14,16,true,[255,255,255]);
@@ -743,7 +750,6 @@ function exportPDF(){
         y+=7;
       });
     }
-    // SESSION FEEDBACK PAGES
     if(pollsSnap.exists()){
       doc.addPage();
       doc.setFillColor(74,32,128);doc.rect(0,0,W,22,"F");
@@ -762,7 +768,7 @@ function exportPDF(){
         var rColors=[[200,80,20],[74,32,128],[26,138,110],[192,40,40]];
         RATING_OPTS.forEach(function(lbl,i){
           var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;
-          doc.setFontSize(8);doc.setFont("helvetica","normal");doc.setTextColor(30,10,48);doc.text(RATING_EMOJIS[i].replace(/&#\d+;/g,"")+" "+lbl,margin,y+4);
+          doc.setFontSize(8);doc.setFont("helvetica","normal");doc.setTextColor(30,10,48);doc.text(lbl,margin,y+4);
           doc.setFillColor(230,224,244);doc.rect(margin+40,y,80,4,"F");
           doc.setFillColor(rColors[i][0],rColors[i][1],rColors[i][2]);if(pct>0)doc.rect(margin+40,y,Math.max(1,pct*0.8),4,"F");
           doc.setFontSize(8);doc.setFont("helvetica","bold");doc.setTextColor(74,32,128);doc.text(pct+"%",margin+124,y+4);
@@ -770,7 +776,7 @@ function exportPDF(){
         });
         var isConf=poll.id==="conference";var uOpts=isConf?CONF_OPTS:USAGE_OPTS;
         var uc=[0,0,0];responses.forEach(function(r){if(r.usage!==undefined)uc[r.usage]++;});
-        doc.setFontSize(8);doc.setFont("helvetica","bold");doc.setTextColor(74,32,128);doc.text((isConf?"Recommend KAHCC?":"Use in 30 days?"),margin,y+4);y+=7;
+        doc.setFontSize(8);doc.setFont("helvetica","bold");doc.setTextColor(74,32,128);doc.text(isConf?"Recommend KAHCC?":"Use in 30 days?",margin,y+4);y+=7;
         uOpts.forEach(function(lbl,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;doc.setFontSize(8);doc.setFont("helvetica","normal");doc.setTextColor(30,10,48);doc.text(lbl+": "+pct+"%",margin+(i*55),y+4);});y+=10;
         var takeaways=responses.filter(function(r){return r.takeaway;}).map(function(r){return r.takeaway;});
         if(takeaways.length){
@@ -792,31 +798,32 @@ function exportPDF(){
   });
 }
 
-// EXPOSE APP OBJECT
 window.APP={
-  signIn:function(){signInWithPopup(auth,provider).catch(function(){showToast("Sign in failed");});},
+  signIn:function(){signInWithPopup(auth,provider).catch(function(e){showToast("Sign in failed: "+e.message);});},
   signOut:function(){signOut(auth);},
   switchTab:switchTab,
   openModal:openModal,
   closeModal:closeModal,
   closeModalOutside:closeModalOutside,
-  toggleAdm:toggleAdm,
+  showPoll:showPoll,
+  selPoll:selPoll,
+  submitPoll:submitPoll,
+  closePollModal:closePollModal,
+  closePollModalOutside:closePollModalOutside,
+  toggleAdminSection:toggleAdminSection,
   unlockAdmin:unlockAdmin,
   adminStartGame:adminStartGame,
   adminNextRound:adminNextRound,
   adminResetGame:adminResetGame,
   activatePoll:activatePoll,
-  closePoll:closePoll,
+  closePollAdmin:closePollAdmin,
   revealPoll:revealPoll,
-  showPoll:showPoll,
-  selPoll:selPoll,
-  submitPoll:submitPoll,
   answerQ:answerQ,
   switchFeed:switchFeed,
-  approveHunt: approveHunt,
   submitPost:submitPost,
   doReact:doReact,
   doReply:doReply,
+  approveHunt:approveHunt,
   toggleCardEdit:toggleCardEdit,
   addCardField:addCardField,
   saveMyCard:saveMyCard,
@@ -826,26 +833,5 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
-  toggleAdminSection:toggleAdminSection,
-closePollModal:closePollModal,
-closePollModalOutside:closePollModalOutside,
-  signIn: function(){
-    signInWithPopup(auth, provider).catch(function(error){
-      console.error(error); // Logs the full error to your browser console
-      showToast("Sign in failed: " + error.message); // Shows you the actual reason on screen
-    });
-  },
   renderDashboard:renderDashboard
-
-  function toggleAdminSection(){
-  var b=document.getElementById("adminSectionBody");
-  b.style.display=b.style.display==="none"?"block":"none";
-}
-function closePollModal(){
-  document.getElementById("pollModal").classList.remove("open");
-  document.body.style.overflow="";
-}
-function closePollModalOutside(e){
-  if(e.target.id==="pollModal") closePollModal();
-}
 };

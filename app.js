@@ -1060,7 +1060,6 @@ window.APP={
   doReply:doReply,
   approveHunt:approveHunt,
   toggleCardEdit:toggleCardEdit,
-  addCardField:addCardField,
   saveMyCard:saveMyCard,
   searchAttendees:searchAttendees,
   doConnect:doConnect,

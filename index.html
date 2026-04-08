@@ -15,8 +15,14 @@
     border: 2px solid #fff;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 0 8px rgba(74, 32, 128, 0.6);
-    animation: dotPulse 2s infinite;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3); /* A static, clean shadow instead of a glowing aura */
+    animation: popIn 0.5s ease-out forwards; /* Animates just ONCE */
+}
+
+@keyframes popIn {
+    0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+    70% { transform: translate(-50%, -50%) scale(1.4); }
+    100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
 }
 
 @keyframes dotPulse {

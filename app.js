@@ -583,41 +583,43 @@ function submitPost(){
 }
 
 // CONNECT
-function renderMyCard(){
-  var el=document.getElementById("myCardDisplay");if(!el)return;
-  if(!CU||!CUD){el.innerHTML="<p style='font-size:12px;color:#888;text-align:center;padding:9px 0;'>Sign in to create your card.</p>";return;}
-  var fHTML=(cardFields||[]).filter(function(f){return f.value;}).map(function(f){return"<div class='biz-field'>&#8250; <strong>"+esc(f.label)+":</strong> "+esc(f.value)+"</div>";}).join("");
-  el.innerHTML="<div class='biz-card'><div class='biz-animal'>"+(CUD.animal||"&#128062;")+"</div><div class='biz-name'>"+esc(CUD.name||"Attendee")+"</div><div class='biz-fields'>"+fHTML+"</div></div>";
-}
-function toggleCardEdit(){
-  var ed=document.getElementById("cardEditor");var btn=document.getElementById("editCardBtn");
-  if(ed.style.display==="none"){ed.style.display="block";btn.textContent="Cancel";renderFieldEditor();}
-  else{ed.style.display="none";btn.textContent="&#9998; Edit My Card";}
-}
-function renderFieldEditor() {
-    var el = document.getElementById("cardFields");
+function renderMyCard() {
+    var el = document.getElementById("myCardDisplay");
     if (!el) return;
+    if (!CU || !CUD) {
+        el.innerHTML = "<p style='font-size:12px;color:#888;text-align:center;padding:9px 0;'>Sign in to create your card.</p>";
+        return;
+    }
 
-    // Look for existing data to pre-fill the boxes
-    var org = "", title = "", phone = "", linkedIn = "";
+    // Smartly extract standard fields based on what the user typed
+    var org = "", title = "", linkedIn = "", email = CU.email || "", otherFields = "";
     (cardFields || []).forEach(function(f) {
+        if (!f.value) return;
         var lbl = (f.label || "").toLowerCase();
+        
         if (lbl.includes("org") || lbl.includes("hospital") || lbl.includes("clinic")) org = f.value;
         else if (lbl.includes("title") || lbl.includes("role")) title = f.value;
-        else if (lbl.includes("phone") || lbl.includes("cell")) phone = f.value;
         else if (lbl.includes("linkedin")) linkedIn = f.value;
+        else if (lbl.includes("email")) email = f.value;
+        else otherFields += "<div class='detail-item'><span class='detail-label'>" + esc(f.label) + "</span><span class='detail-value'>" + esc(f.value) + "</span></div>";
     });
 
-    // Build the clean, standard business card form
-    var html = "<div style='background: #fff; border: 1px solid var(--border); padding: 15px; border-radius: 12px; margin-bottom: 15px;'>";
-    html += "<p style='font-size: 12px; color: #666; margin-bottom: 15px; text-align: center;'>Update your digital business card details below.</p>";
-    
-    html += "<div class='input-group'><label>Professional Title</label><input type='text' id='editTitle' placeholder='e.g., Director of Marketing' value='" + esc(title) + "' /></div>";
-    html += "<div class='input-group'><label>Organization</label><input type='text' id='editOrg' placeholder='e.g., Patterson Health Center' value='" + esc(org) + "' /></div>";
-    html += "<div class='input-group'><label>Phone Number</label><input type='tel' id='editPhone' placeholder='e.g., 555-123-4567' value='" + esc(phone) + "' /></div>";
-    html += "<div class='input-group'><label>LinkedIn URL</label><input type='text' id='editLinkedIn' placeholder='linkedin.com/in/yourname' value='" + esc(linkedIn) + "' /></div>";
-    
+    // Build the big tappable LinkedIn button if they added a URL
+    var lnkBtn = linkedIn ? "<a href='" + (linkedIn.startsWith('http') ? linkedIn : 'https://' + linkedIn) + "' target='_blank' class='linkedin-pill'>Connect on LinkedIn</a>" : "";
+
+    // Assemble the VIP Card
+    var html = "<div class='user-card-deliberate'>";
+    html += "<div class='card-header-main'>";
+    html += "<div class='profile-circle'>" + (CUD.animal || "&#128062;") + "</div>";
+    html += "<div class='profile-name-area'><h2>" + esc(CUD.name || "Attendee") + "</h2><p class='headline-title'>" + esc(title) + "</p></div>";
     html += "</div>";
+    html += "<hr style='border:0; border-top:1px solid rgba(255,255,255,0.2); margin:15px 0;'>";
+    html += "<div class='card-details-grid'>";
+    if (org) html += "<div class='detail-item'><span class='detail-label'>&#127973; Organization</span><span class='detail-value'>" + esc(org) + "</span></div>";
+    if (email) html += "<div class='detail-item'><span class='detail-label'>&#128231; Email</span><span class='detail-value'>" + esc(email) + "</span></div>";
+    html += otherFields;
+    html += lnkBtn;
+    html += "</div></div>";
 
     el.innerHTML = html;
 }

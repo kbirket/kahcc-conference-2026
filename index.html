@@ -8,53 +8,65 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
 /* FINAL CLEAN MAP DOTS */
+/* FINAL BULLETPROOF MAP DOTS */
 .map-dot {
     position: absolute;
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
     background: var(--purple);
     border: 2px solid #fff;
     border-radius: 50%;
     transform: translate(-50%, -50%);
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.4);
     cursor: pointer;
-    z-index: 10;
-    transition: transform 0.2s ease;
-    /* This keeps your cool entrance animation! */
-    animation: popIn 0.5s ease-out forwards; 
+    z-index: 99;
+    /* THIS IS THE FIX: Allow mouse/touch to hit the dot */
+    pointer-events: auto !important; 
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-/* Subtle grow effect on hover/tap so it feels responsive */
 .map-dot:hover {
-    transform: translate(-50%, -50%) scale(1.4);
-    z-index: 21; /* Brings the active dot to the front */
+    transform: translate(-50%, -50%) scale(1.5);
+    background: var(--purple-dark);
+    z-index: 1000;
 }
 
-/* The Interactive Label */
 .dot-tooltip {
     position: absolute;
-    bottom: 200%; 
+    bottom: 180%; 
     left: 50%;
     transform: translateX(-50%) scale(0);
-    background: #ffffff; /* Bright white to stand out */
-    color: #000000; /* Sharp black text */
+    background: var(--purple-dark);
+    color: white;
     padding: 8px 12px;
     border-radius: 8px;
     font-size: 12px;
+    line-height: 1.3;
+    font-weight: bold;
     white-space: nowrap;
-    pointer-events: none;
-    transition: all 0.2s ease-out;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-    border: 2px solid var(--gold);
+    pointer-events: none; /* Mouse should ignore the label itself */
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    border: 1px solid var(--gold);
     opacity: 0;
-    z-index: 999;
+    text-align: center;
 }
 
-/* Force it to show when the dot is hovered */
+.dot-tooltip::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -6px;
+    border-width: 6px;
+    border-style: solid;
+    border-color: var(--gold) transparent transparent transparent;
+}
+
+/* Force the reveal */
 .map-dot:hover .dot-tooltip {
-    transform: translateX(-50%) scale(1) !important;
-    opacity: 1 !important;
-    display: block !important;
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
 }
 
 @keyframes popIn {
@@ -529,8 +541,8 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
         <button onclick="APP.submitMyLocation()" style="background: var(--purple); color: white; border: none; padding: 8px 12px; border-radius: 8px; font-weight: bold; font-size:12px;">Place Dot!</button>
       </div>
     </div>
-    <div id="dotMapContainer" style="position: relative; width: 100%; aspect-ratio: 2.05/1; background: #fff; border-radius: 8px; border: 2px solid var(--border); overflow: hidden;">
-  <img src="kansas-map.png" style="width: 100%; height: 100%; object-fit: fill; opacity: 0.5;">
+<div id="dotMapContainer" style="position: relative; width: 100%; aspect-ratio: 2.05/1; background: #fff; border-radius: 8px; border: 2px solid var(--border); margin-bottom: 20px;"> 
+    <img src="kansas-map.png" style="width: 100%; height: 100%; object-fit: fill; opacity: 0.5;">
   <div id="mapDotLayer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none;"></div>
 </div>
   </div>

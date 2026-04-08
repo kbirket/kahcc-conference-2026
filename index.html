@@ -7,6 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
+  .map-dot {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background: var(--purple);
+    border: 2px solid #fff;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 8px rgba(74, 32, 128, 0.6);
+    animation: dotPulse 2s infinite;
+}
+
+@keyframes dotPulse {
+    0% { box-shadow: 0 0 0 0px rgba(74, 32, 128, 0.7); }
+    100% { box-shadow: 0 0 0 10px rgba(74, 32, 128, 0); }
+}
 :root{--purple:#4a2080;--purple-dark:#2d1350;--purple-light:#6b3aad;--orange:#e8820a;--gold:#c8a84b;--gold-light:#e8c96a;--easy:#1a8a6e;--medium:#d47a00;--hard:#c02828;--off-white:#f8f5ff;--gray:#f0ecf8;--text:#1a0a30;--border:#e0d8f0;}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
 body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--text);min-height:100vh;overflow-x:hidden;}

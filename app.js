@@ -1075,7 +1075,6 @@ function exportPDF(){
 }
 // --- KANSAS MAP LOGIC (Attendee & Organization Verified) ---
 const KS_TOWNS = {
-  // TOWNS
   "abilene": {x:64, y:38}, "anthony": {x:53, y:92}, "arkansas city": {x:68, y:93},
   "marion": {x:68, y:52}, "newton": {x:63, y:65}, "osborne": {x:42, y:23},
   "clay center": {x:64, y:28}, "liberal": {x:12, y:93}, "wichita": {x:63, y:75},
@@ -1086,8 +1085,6 @@ const KS_TOWNS = {
   "kiowa": {x:47, y:93}, "seneca": {x:82, y:14}, "girard": {x:96, y:88}, 
   "hays": {x:34, y:38}, "holton": {x:85, y:23}, "inman": {x:56, y:58}, 
   "lyons": {x:50, y:58}, "kansas city": {x:96, y:35}, "salina": {x:58, y:38},
-
-  // ORGANIZATIONS (Haley-Proofing)
   "memorial health system": {x:64, y:38}, 
   "salina regional": {x:58, y:38},
   "patterson health center": {x:53, y:92},
@@ -1122,28 +1119,16 @@ function submitMyLocation() {
   if (!townInput) return;
   var rawName = townInput.value.trim();
   if (!rawName) return;
-
   var lookup = rawName.toLowerCase();
-  
-  // 1. Try exact match
-  // 2. Try seeing if the hospital name is PART of what they typed
   var pos = KS_TOWNS[lookup];
-  
   if (!pos) {
-    // Advanced check: See if their input includes one of our hospital names
     for (var key in KS_TOWNS) {
-      if (lookup.includes(key)) {
-        pos = KS_TOWNS[key];
-        break;
-      }
+      if (lookup.includes(key)) { pos = KS_TOWNS[key]; break; }
     }
   }
-
-  // Final fallback if we still don't know where they are (Random central-ish)
   if (!pos) pos = { x: 45 + Math.random() * 10, y: 45 + Math.random() * 10 };
 
-  const newLocRef = push(ref(db, 'mapLocations'));
-  set(newLocRef, {
+  push(ref(db, 'mapLocations'), {
     userName: CUD.name || "Attendee",
     town: rawName,
     x: pos.x,
@@ -1155,7 +1140,28 @@ function submitMyLocation() {
   });
 }
 
-// --- THE APP BRAIN (Ensures Nav Tabs Work) ---
+function initLiveMap() {
+    const mapLayer = document.getElementById('mapDotLayer');
+    if (!mapLayer) return;
+    onValue(ref(db, 'mapLocations'), (snapshot) => {
+        mapLayer.innerHTML = ''; 
+        const data = snapshot.val();
+        if (!data) return;
+        Object.values(data).forEach(loc => {
+            const dot = document.createElement('div');
+            dot.className = 'map-dot';
+            dot.style.left = loc.x + '%';
+            dot.style.top = loc.y + '%';
+            const tooltip = document.createElement('div');
+            tooltip.className = 'dot-tooltip';
+            tooltip.innerHTML = `<strong>${esc(loc.userName)}</strong><br><span style='color:var(--gold-light);font-size:10px;'>${esc(loc.town)}</span>`;
+            dot.appendChild(tooltip);
+            mapLayer.appendChild(dot);
+        });
+    });
+}
+
+// --- FINAL APP BRAIN (The "Tabs Fix") ---
 window.APP = {
   signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
   signOut: function() { signOut(auth); },

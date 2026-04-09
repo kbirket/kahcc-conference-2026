@@ -1180,17 +1180,49 @@ function initLiveMap() {
 }
 
 // THE FINAL BRAIN - MUST BE AT THE VERY BOTTOM
+// --- THE FULL, UNCUT APP BRAIN ---
 window.APP = {
-  signIn: () => signInWithPopup(auth, provider).catch(e => showToast(e.message)),
-  signOut: () => signOut(auth),
-  switchTab: (id) => { 
-      if(typeof switchTab === 'function') switchTab(id); 
-      else console.error("switchTab function missing!");
-  },
-  // ... (keep all your other functions here like openModal, submitPoll, etc.)
+  signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
+  signOut: function() { signOut(auth); },
+  switchTab: switchTab,
+  openModal: openModal,
+  closeModal: closeModal,
+  closeModalOutside: closeModalOutside,
+  showPoll: showPoll,
+  selPoll: selPoll,
+  submitPoll: submitPoll,
+  closePollModal: closePollModal,
+  closePollModalOutside: closeModalOutside,
+  toggleAdminSection: toggleAdminSection,
+  unlockAdmin: unlockAdmin,
+  adminStartGame: adminStartGame,
+  adminNextRound: adminNextRound,
+  adminResetGame: adminResetGame,
+  clearAllTestData: clearAllTestData,
+  activatePoll: activatePoll,
+  closePollAdmin: closePollAdmin,
+  revealPoll: revealPoll,
+  answerQ: answerQ,
+  switchFeed: switchFeed,
+  submitPost: submitPost,
+  doReact: doReact,
+  doReply: doReply,
+  approveHunt: approveHunt,
+  toggleCardEdit: toggleCardEdit,
+  saveMyCard: saveMyCard,
+  uploadProfilePic: uploadProfilePic,
+  searchAttendees: searchAttendees,
+  doConnect: doConnect,
+  downloadConnections: downloadConnections,
+  emailConnections: emailConnections,
+  uploadHunt: uploadHunt,
+  exportPDF: exportPDF,
+  renderDashboard: renderDashboard,
+  submitQuestion: submitQuestion,
+  replyQuestion: replyQuestion,
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap
 };
 
-// Re-map switchTab specifically for mobile browsers that are picky
+// Mobile Tab Safety Net
 window.switchTab = switchTab;

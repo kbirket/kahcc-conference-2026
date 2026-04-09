@@ -70,9 +70,21 @@
     opacity: 1;
 }
 
-/* ENSURE FOOTER TABS ARE ALWAYS CLICKABLE */
-.footer-nav {
+/* ENSURE TABS & INPUTS ARE ALWAYS CLICKABLE */
+.nav-tabs {
     z-index: 9999 !important;
+    pointer-events: auto !important;
+    position: relative;
+}
+
+#mapDotLayer { 
+    pointer-events: none !important; 
+    z-index: 5; 
+}
+
+input, textarea, button, .auth-btn, .nav-tab {
+    position: relative;
+    z-index: 20 !important;
     pointer-events: auto !important;
 }
 

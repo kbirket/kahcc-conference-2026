@@ -1220,6 +1220,7 @@ window.APP = {
   renderDashboard: renderDashboard,
   submitQuestion: submitQuestion,
   replyQuestion: replyQuestion,
+  toggleNightMode: toggleNightMode,
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap
 };

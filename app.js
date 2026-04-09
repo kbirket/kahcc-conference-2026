@@ -955,7 +955,7 @@ function showWateringHolePrompt(){
   if(!CU||!CUD)return;
   if(CUD.wateringHole)return;
   if(localStorage.getItem("whSkipped_"+CU.uid))return;
-  var html="<div style='position:fixed;inset:0;background:rgba(20,5,40,.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;' id='whOverlay'>";
+  var html="<div style='position:fixed;inset:0;background:rgba(20,5,40,.92);z-index:10010;display:flex;align-items:flex-start;justify-content:center;padding:16px;overflow-y:auto;' id='whOverlay'>";
   html+="<div style='background:#fff;border-radius:16px;max-width:480px;width:100%;overflow:hidden;animation:slideUp .25s ease;'>";
   html+="<div style='background:linear-gradient(135deg,#1a5c3a,#2d8a5e);padding:16px;color:#fff;'>";
   html+="<div style='font-size:20px;margin-bottom:4px;'>&#128086; Welcome to the Watering Hole</div>";

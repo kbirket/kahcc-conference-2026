@@ -1192,7 +1192,7 @@ window.APP = {
   selPoll: selPoll,
   submitPoll: submitPoll,
   closePollModal: closePollModal,
-  closePollModalOutside: closeModalOutside,
+  closePollModalOutside: closePollModalOutside,
   toggleAdminSection: toggleAdminSection,
   unlockAdmin: unlockAdmin,
   adminStartGame: adminStartGame,
@@ -1220,7 +1220,7 @@ window.APP = {
   renderDashboard: renderDashboard,
   submitQuestion: submitQuestion,
   replyQuestion: replyQuestion,
-  toggleNightMode: toggleNightMode,
+  toggleNightMode: function(){showToast("Night mode coming soon!");},
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap
 };

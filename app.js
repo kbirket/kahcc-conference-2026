@@ -909,7 +909,37 @@ function replyQuestion(key){
   update(ref(db,"questions/"+key),{reply:inp.value.trim(),repliedAt:Date.now()});
   showToast("Reply posted!");
 }
+function initNightSafari(){
+  function checkTime(){
+    var force=localStorage.getItem("forceNightMode");
+    if(force==="true"){document.body.classList.add("night-safari");return;}
+    if(force==="false"){document.body.classList.remove("night-safari");return;}
+    var now=new Date();
+    var isEventDay=(now.getFullYear()===2026&&now.getMonth()===3&&now.getDate()===23);
+    if(isEventDay&&(now.getHours()>17||(now.getHours()===17&&now.getMinutes()>=30))){
+      document.body.classList.add("night-safari");
+    }else{
+      document.body.classList.remove("night-safari");
+    }
+  }
+  checkTime();
+  setInterval(checkTime,60000);
+}
 
+function toggleNightMode(){
+  var isNight=document.body.classList.contains("night-safari");
+  if(isNight){
+    localStorage.setItem("forceNightMode","false");
+    document.body.classList.remove("night-safari");
+    showToast("☀️ Day Mode Restored");
+  }else{
+    localStorage.setItem("forceNightMode","true");
+    document.body.classList.add("night-safari");
+    showToast("🌙 Night Safari Activated!");
+  }
+}
+
+initNightSafari();
 function renderDashboard(){
   var el=document.getElementById("dashContent");if(!el)return;
   el.innerHTML="<div class='feed-empty'>Loading...</div>";
@@ -1220,7 +1250,7 @@ window.APP = {
   renderDashboard: renderDashboard,
   submitQuestion: submitQuestion,
   replyQuestion: replyQuestion,
-  toggleNightMode: function(){showToast("Night mode coming soon!");},
+  toggleNightMode: toggleNightMode,
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap
 };

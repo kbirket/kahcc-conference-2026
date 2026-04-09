@@ -124,6 +124,7 @@ function loadUserData(user){
     cardFields=CUD.card?(CUD.card.fields||[]):[];
     myConns=CUD.connections||{};
     renderMyCard();renderConnections();updateHuntProgress();
+    setTimeout(function(){showWateringHolePrompt();},1500);
   });
 }
 
@@ -146,7 +147,7 @@ function switchTab(name){
   if(map[name]!==undefined)document.querySelectorAll(".nav-tab")[map[name]].classList.add("active");
   if(name==="trivia")renderTriviaGame();
   if(name==="community")loadFeed(curFeed);
-  if(name==="connect"){renderMyCard();renderConnections();}
+  if(name==="connect"){renderMyCard();renderConnections();renderWateringHole();}
   if(name==="hunt")renderHunt();
   if(name==="schedule")checkActivePoll();
   if(name==="dashboard")renderDashboard();
@@ -909,6 +910,7 @@ function replyQuestion(key){
   update(ref(db,"questions/"+key),{reply:inp.value.trim(),repliedAt:Date.now()});
   showToast("Reply posted!");
 }
+
 function initNightSafari(){
   function checkTime(){
     var force=localStorage.getItem("forceNightMode");
@@ -938,7 +940,139 @@ function toggleNightMode(){
     showToast("🌙 Night Safari Activated!");
   }
 }
+var MATCH_TOPICS=[
+  "Engaging physicians and providers",
+  "Wearing too many hats",
+  "Social media and content",
+  "Getting started with AI",
+  "Proving ROI to leadership",
+  "Rural community outreach",
+  "Internal communications",
+  "Tight budget"
+];
 
+function showWateringHolePrompt(){
+  if(!CU||!CUD)return;
+  if(CUD.wateringHole)return;
+  if(localStorage.getItem("whSkipped_"+CU.uid))return;
+  var html="<div style='position:fixed;inset:0;background:rgba(20,5,40,.92);z-index:500;display:flex;align-items:center;justify-content:center;padding:16px;' id='whOverlay'>";
+  html+="<div style='background:#fff;border-radius:16px;max-width:480px;width:100%;overflow:hidden;animation:slideUp .25s ease;'>";
+  html+="<div style='background:linear-gradient(135deg,#1a5c3a,#2d8a5e);padding:16px;color:#fff;'>";
+  html+="<div style='font-size:20px;margin-bottom:4px;'>&#128086; Welcome to the Watering Hole</div>";
+  html+="<div style='font-size:12px;opacity:.85;'>Help us connect the herd! Two quick questions.</div>";
+  html+="</div>";
+  html+="<div style='padding:16px;'>";
+  html+="<div style='font-weight:700;font-size:13px;color:var(--purple);margin-bottom:8px;'>What are you struggling with? <span style='font-weight:400;color:#aaa;'>(pick up to 2)</span></div>";
+  html+="<div id='whStruggle' style='display:flex;flex-direction:column;gap:6px;margin-bottom:16px;'>";
+  MATCH_TOPICS.forEach(function(t,i){
+    html+="<div onclick='APP.whToggle(\"struggle\","+i+")' id='whs_"+i+"' style='padding:9px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer;transition:all .15s;'>"+t+"</div>";
+  });
+  html+="</div>";
+  html+="<div style='font-weight:700;font-size:13px;color:var(--purple);margin-bottom:8px;'>What could you help someone else with? <span style='font-weight:400;color:#aaa;'>(pick up to 2)</span></div>";
+  html+="<div id='whHelp' style='display:flex;flex-direction:column;gap:6px;margin-bottom:16px;'>";
+  MATCH_TOPICS.forEach(function(t,i){
+    html+="<div onclick='APP.whToggle(\"help\","+i+")' id='whh_"+i+"' style='padding:9px 12px;border:2px solid var(--border);border-radius:10px;font-size:13px;cursor:pointer;transition:all .15s;'>"+t+"</div>";
+  });
+  html+="</div>";
+  html+="<button onclick='APP.whSave()' style='width:100%;padding:12px;background:linear-gradient(135deg,#1a5c3a,#2d8a5e);color:#fff;border:none;border-radius:10px;font-family:Barlow Condensed,sans-serif;font-size:15px;font-weight:700;letter-spacing:1px;cursor:pointer;text-transform:uppercase;margin-bottom:8px;'>&#128086; Find My Herd</button>";
+  html+="<button onclick='APP.whSkip()' style='width:100%;padding:9px;background:none;border:none;color:#aaa;font-size:12px;cursor:pointer;'>Skip for now</button>";
+  html+="</div></div></div>";
+  var div=document.createElement("div");
+  div.innerHTML=html;
+  document.body.appendChild(div.firstChild);
+  window._whSel={struggle:[],help:[]};
+}
+
+function whToggle(group,idx){
+  window._whSel=window._whSel||{struggle:[],help:[]};
+  var arr=window._whSel[group];
+  var prefix=group==="struggle"?"whs_":"whh_";
+  var pos=arr.indexOf(idx);
+  if(pos>-1){
+    arr.splice(pos,1);
+    document.getElementById(prefix+idx).style.background="#fff";
+    document.getElementById(prefix+idx).style.borderColor="var(--border)";
+    document.getElementById(prefix+idx).style.color="var(--text)";
+  }else{
+    if(arr.length>=2){showToast("Pick up to 2!");return;}
+    arr.push(idx);
+    document.getElementById(prefix+idx).style.background="linear-gradient(135deg,#1a5c3a,#2d8a5e)";
+    document.getElementById(prefix+idx).style.borderColor="#1a5c3a";
+    document.getElementById(prefix+idx).style.color="#fff";
+  }
+}
+
+function whSave(){
+  if(!CU||!CUD)return;
+  window._whSel=window._whSel||{struggle:[],help:[]};
+  if(!window._whSel.struggle.length&&!window._whSel.help.length){showToast("Pick at least one!");return;}
+  var data={
+    struggle:window._whSel.struggle.map(function(i){return MATCH_TOPICS[i];}),
+    help:window._whSel.help.map(function(i){return MATCH_TOPICS[i];})
+  };
+  CUD.wateringHole=data;
+  update(ref(db,"users/"+CU.uid),{wateringHole:data});
+  var ov=document.getElementById("whOverlay");if(ov)ov.remove();
+  showToast("You're in the Watering Hole!");
+  renderConnections();
+}
+
+function whSkip(){
+  localStorage.setItem("whSkipped_"+CU.uid,"true");
+  var ov=document.getElementById("whOverlay");if(ov)ov.remove();
+}
+
+function renderWateringHole(){
+  var el=document.getElementById("wateringHoleSection");if(!el)return;
+  if(!CU){el.innerHTML="<p style='font-size:12px;color:#888;text-align:center;padding:9px 0;'>Sign in to visit the Watering Hole!</p>";return;}
+  get(ref(db,"users")).then(function(snap){
+    if(!snap.exists()){el.innerHTML="<div class='feed-empty'>No one here yet!</div>";return;}
+    var myWH=CUD&&CUD.wateringHole?CUD.wateringHole:{struggle:[],help:[]};
+    var matches=[];
+    snap.forEach(function(c){
+      var u=c.val();
+      if(!u||u.uid===CU.uid||!u.wateringHole)return;
+      var theirHelp=u.wateringHole.help||[];
+      var score=0;
+      myWH.struggle.forEach(function(s){if(theirHelp.indexOf(s)>-1)score++;});
+      if(score>0)matches.push({user:u,score:score});
+    });
+    matches.sort(function(a,b){return b.score-a.score;});
+    var myAnswers="";
+    if(myWH.struggle.length||myWH.help.length){
+      myAnswers="<div style='background:#f4f0fc;border-radius:10px;padding:11px 13px;margin-bottom:13px;'>";
+      if(myWH.struggle.length)myAnswers+="<div style='font-size:11px;font-weight:700;color:var(--purple);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;'>You need help with</div>"+myWH.struggle.map(function(s){return"<div style='font-size:12px;color:var(--text);padding:2px 0;'>&#8250; "+esc(s)+"</div>";}).join("")+"<div style='height:8px;'></div>";
+      if(myWH.help.length)myAnswers+="<div style='font-size:11px;font-weight:700;color:var(--easy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px;'>You can help with</div>"+myWH.help.map(function(s){return"<div style='font-size:12px;color:var(--text);padding:2px 0;'>&#9989; "+esc(s)+"</div>";}).join("");
+      myAnswers+="<button onclick='APP.showWateringHolePrompt()' style='margin-top:10px;width:100%;padding:7px;background:none;border:1px solid var(--purple);border-radius:8px;color:var(--purple);font-family:Barlow Condensed,sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;'>Edit My Answers</button>";
+      myAnswers+="</div>";
+    }else{
+      myAnswers="<button onclick='APP.showWateringHolePrompt()' style='width:100%;padding:11px;background:linear-gradient(135deg,#1a5c3a,#2d8a5e);color:#fff;border:none;border-radius:10px;font-family:Barlow Condensed,sans-serif;font-size:14px;font-weight:700;cursor:pointer;text-transform:uppercase;margin-bottom:13px;'>&#128086; Join the Watering Hole</button>";
+    }
+    var matchHTML="";
+    if(!matches.length){
+      matchHTML="<div class='feed-empty'>No matches yet — check back as more people join!</div>";
+    }else{
+      matchHTML="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:9px;'>&#128086; Your Matches</div>";
+      matches.slice(0,10).forEach(function(m){
+        var u=m.user;
+        var org=u.card&&u.card.fields&&u.card.fields.find(function(f){return f.label.toLowerCase().includes("org");});
+        var theirHelp=u.wateringHole.help||[];
+        var shared=myWH.struggle.filter(function(s){return theirHelp.indexOf(s)>-1;});
+        var iC=myConns&&myConns[u.uid];
+        matchHTML+="<div style='background:#fff;border-radius:12px;padding:12px;margin-bottom:8px;box-shadow:0 2px 8px rgba(74,32,128,.07);border-left:4px solid #1a5c3a;'>";
+        matchHTML+="<div style='display:flex;align-items:center;gap:10px;margin-bottom:7px;'>";
+        matchHTML+="<span style='font-size:26px;'>"+(u.animal||"&#128062;")+"</span>";
+        matchHTML+="<div style='flex:1;'><div style='font-weight:700;font-size:13px;color:var(--text);'>"+esc(u.name||"Attendee")+"</div><div style='font-size:10px;color:var(--purple-light);'>"+(org?esc(org.value):"")+"</div></div>";
+        matchHTML+="<button class='conn-btn"+(iC?" connected":"")+"' onclick=\"APP.doConnect('"+u.uid+"')\">"+(iC?"&#9989; Connected":"Connect")+"</button>";
+        matchHTML+="</div>";
+        matchHTML+="<div style='font-size:11px;font-weight:700;color:#1a5c3a;margin-bottom:3px;'>Can help you with:</div>";
+        shared.forEach(function(s){matchHTML+="<div style='font-size:11px;color:#444;padding:1px 0;'>&#9989; "+esc(s)+"</div>";});
+        matchHTML+="</div>";
+      });
+    }
+    el.innerHTML=myAnswers+matchHTML;
+  });
+}
 initNightSafari();
 function renderDashboard(){
   var el=document.getElementById("dashContent");if(!el)return;
@@ -1247,9 +1381,14 @@ window.APP = {
   emailConnections: emailConnections,
   uploadHunt: uploadHunt,
   exportPDF: exportPDF,
-  renderDashboard: renderDashboard,
-  submitQuestion: submitQuestion,
-  replyQuestion: replyQuestion,
+renderDashboard:renderDashboard,
+  submitQuestion:submitQuestion,
+  replyQuestion:replyQuestion,
+  showWateringHolePrompt:showWateringHolePrompt,
+  whToggle:whToggle,
+  whSave:whSave,
+  whSkip:whSkip,
+  renderWateringHole:renderWateringHole,
   toggleNightMode: toggleNightMode,
   submitMyLocation: submitMyLocation,
   initLiveMap: initLiveMap

@@ -439,6 +439,18 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .sponsor-track{display:flex;align-items:center;gap:40px;width:max-content;animation:scrollSponsors 25s linear infinite;}
 .sponsor-track img{height:35px;width:auto;object-fit:contain;opacity:.9;}
 @keyframes scrollSponsors{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+    /* FORCE MODALS TO THE ABSOLUTE FRONT */
+.modal-ov {
+    z-index: 10001 !important;
+}
+
+.poll-modal-ov {
+    z-index: 10002 !important;
+}
+
+.toast {
+    z-index: 10005 !important;
+}
 </style>
 </head>
 <body>

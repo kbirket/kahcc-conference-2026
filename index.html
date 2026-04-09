@@ -451,6 +451,72 @@ body{font-family:'Barlow',sans-serif;background:var(--purple-dark);color:var(--t
 .toast {
     z-index: 10005 !important;
 }
+    /* =========================================
+   🌙 NIGHT SAFARI MODE
+   ========================================= */
+body.night-safari {
+    --off-white: #120822; /* Deep midnight purple */
+    --gray: #21103c;
+    --text: #f0ecf8;
+    --border: #4a2080;
+    transition: background-color 1.5s ease, color 1.5s ease;
+}
+
+body.night-safari .content { background: var(--off-white); }
+
+body.night-safari .card,
+body.night-safari .si,
+body.night-safari .qcard,
+body.night-safari .composer,
+body.night-safari .post-card,
+body.night-safari .poll-card,
+body.night-safari .modal,
+body.night-safari .poll-modal {
+    background: #1e0d36 !important;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 15px rgba(200, 168, 75, 0.05); /* Subtle gold glow */
+}
+
+/* Make text pop in the dark */
+body.night-safari .stitle, 
+body.night-safari .poll-q, 
+body.night-safari .qtext, 
+body.night-safari .card-hdr h3,
+body.night-safari .biz-name {
+    color: var(--gold-light) !important;
+}
+
+/* Darken schedule rows */
+body.night-safari .si:hover { background: #2a134a !important; }
+body.night-safari .si.brk { background: #150a26 !important; }
+body.night-safari .si.spl { background: #351a1a !important; border-left: 4px solid var(--orange); }
+
+/* Dark inputs */
+body.night-safari .qopt, 
+body.night-safari input, 
+body.night-safari textarea {
+    background: #150a26 !important; 
+    color: white !important; 
+    border-color: var(--purple-light) !important;
+}
+
+/* Magic Starry Header */
+body.night-safari .app-header {
+    background: linear-gradient(135deg, #0a0212, #1b0735 60%, #2a0b4e);
+}
+body.night-safari .app-header::before {
+    content: '✨';
+    position: absolute;
+    top: 15px; right: 25px;
+    font-size: 24px;
+    background: none;
+    opacity: 0.5;
+    animation: twinkle 3s infinite alternate;
+}
+@keyframes twinkle { 
+    0% { opacity: 0.2; transform: scale(0.8); } 
+    100% { opacity: 0.8; transform: scale(1.2); } 
+}
 </style>
 </head>
 <body>

@@ -7,48 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;600;700&family=Barlow+Condensed:wght@400;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <style>
-    // --- 🌙 NIGHT SAFARI LOGIC ---
-function initNightSafari() {
-    function checkTime() {
-        // 1. Check if the Admin manually forced it on/off
-        const forceState = localStorage.getItem('forceNightMode');
-        if (forceState === 'true') {
-            document.body.classList.add('night-safari');
-            return;
-        } else if (forceState === 'false') {
-            document.body.classList.remove('night-safari');
-            return;
-        }
-
-        // 2. Auto-Trigger: April 23, 2026, at exactly 5:30 PM (17:30)
-        const now = new Date();
-        const isEventDay = (now.getFullYear() === 2026 && now.getMonth() === 3 && now.getDate() === 23); // Month 3 is April
-        
-        if (isEventDay && (now.getHours() > 17 || (now.getHours() === 17 && now.getMinutes() >= 30))) {
-            document.body.classList.add('night-safari');
-        } else {
-            document.body.classList.remove('night-safari');
-        }
-    }
-    checkTime();
-    setInterval(checkTime, 60000); // Check the clock every 60 seconds
-}
-
-function toggleNightMode() {
-    const isNight = document.body.classList.contains('night-safari');
-    if (isNight) {
-        localStorage.setItem('forceNightMode', 'false');
-        document.body.classList.remove('night-safari');
-        showToast("☀️ Day Mode Restored");
-    } else {
-        localStorage.setItem('forceNightMode', 'true');
-        document.body.classList.add('night-safari');
-        showToast("🌙 Night Safari Activated!");
-    }
-}
-
-// Start the clock watcher when the app loads
-initNightSafari();
+  
 /* MOBILE-FRIENDLY MAP DOTS */
 .map-dot {
     position: absolute;

@@ -494,6 +494,7 @@ function clearAllTestData(){
   });
   localAnswers={};
   showToast("All test data cleared!");
+  setTimeout(function(){refreshSchedulePollBadges();checkActivePoll();},1000);
 }
 function renderAdminHunt(){
   var el=document.getElementById("adminHuntApproval");if(!el)return;

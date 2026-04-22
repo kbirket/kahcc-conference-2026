@@ -316,8 +316,8 @@ html+="<textarea class='poll-textarea' id='po-boardinfo' placeholder='Please sha
   html+="<div class='poll-card'><div class='poll-q'>This session was a valuable use of my time.</div><div class='poll-opts' id='po-rating'>";
     LIKERT.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+LIKERT_E[i]+" "+o+"</div>";});
     html+="</div></div>";
-    html+="<div class='poll-card'><div class='poll-q'>I will use something from this session in the next 30 days.</div><div class='poll-opts' id='po-usage'>";
-    LIKERT.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+LIKERT_E[i]+" "+o+"</div>";});
+   html+="<div class='poll-card'><div class='poll-q'>Will you use something from this session in the next 30 days?</div><div class='poll-opts' id='po-usage'>";
+    USAGE_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+USAGE_EMOJIS[i]+" "+o+"</div>";});
     html+="</div></div>";
     html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
   }
@@ -1303,9 +1303,9 @@ POLLS.forEach(function(poll){
           html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
           LIKERT.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span></div>";});
           html+="</div>";
-          html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;'>I will use something from this session in the next 30 days.</div>";
+         html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;'>Will you use something from this session in the next 30 days?</div>";
           html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
-          LIKERT.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
+          USAGE_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+USAGE_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
      if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
           html+="</div>";
         }

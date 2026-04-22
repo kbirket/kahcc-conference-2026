@@ -302,7 +302,7 @@ function buildPollFormHTML(pid,poll){
     html+="<div class='poll-card'><div class='poll-q'>Additional comments about this year's conference?</div><textarea class='poll-textarea' id='po-comments' placeholder='Your thoughts...'></textarea></div>";
     // Q12 Committee interest
     html+="<div class='poll-card'><div class='poll-q'>Would you be interested in serving on a KAHCC committee?</div><div class='poll-opts' id='po-committee'>";
-    ["Membership, Networking &amp; Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"].forEach(function(o,i){
+    var committees=["Nominating","Program and Awards","Membership and Engagement","Not at this time"];
       html+="<div class='poll-opt' onclick=\"APP.selPollMulti('committee',"+i+")\" id='poc_"+i+"'>"+o+"</div>";
     });
     html+="</div></div>";
@@ -310,14 +310,13 @@ function buildPollFormHTML(pid,poll){
     html+="<div class='poll-card'><div class='poll-q'>Would you be interested in serving on the KAHCC Board?</div><div class='poll-opts' id='po-board'>";
     ["Yes","No"].forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('board',"+i+")\">"+o+"</div>";});
     html+="</div>";
-    html+="<textarea class='poll-textarea' id='po-boardinfo' placeholder='If yes, your name, organization and email...'></textarea>";
-    html+="</div>";
+html+="<textarea class='poll-textarea' id='po-boardinfo' placeholder='Please share your organization and best email address so we can reach you...'></textarea>";    html+="</div>";
   }else{
-    html+="<div class='poll-card'><div class='poll-q'>Overall rating</div><div class='poll-opts' id='po-rating'>";
-    RATING_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+RATING_EMOJIS[i]+" "+o+"</div>";});
+  html+="<div class='poll-card'><div class='poll-q'>This session was a valuable use of my time.</div><div class='poll-opts' id='po-rating'>";
+    LIKERT.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+LIKERT_E[i]+" "+o+"</div>";});
     html+="</div></div>";
-    html+="<div class='poll-card'><div class='poll-q'>Will you use something from this session in the next 30 days?</div><div class='poll-opts' id='po-usage'>";
-    USAGE_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+USAGE_EMOJIS[i]+" "+o+"</div>";});
+    html+="<div class='poll-card'><div class='poll-q'>I will use something from this session in the next 30 days.</div><div class='poll-opts' id='po-usage'>";
+    LIKERT.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+LIKERT_E[i]+" "+o+"</div>";});
     html+="</div></div>";
     html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
   }
@@ -381,7 +380,7 @@ function submitPoll(pollId){
   if(isConf){
     // Require at least Q1
     if(window._pollSel["likert0"]===undefined){showToast("Please answer at least the first question!");return;}
-    var committees=["Membership, Networking & Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"];
+    var committees=["Nominating","Program and Awards","Membership and Engagement","Not at this time"];
     var data={
       name:CUD?CUD.name:"Attendee",ts:Date.now(),
       likert0:window._pollSel["likert0"],
@@ -1250,7 +1249,7 @@ POLLS.forEach(function(poll){
           var bt=bc.reduce(function(a,b){return a+b;},0);
           if(bt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Interested in serving on the Board?</div>";["Yes","No"].forEach(function(o,i){var pct=Math.round((bc[i]/bt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+o+": <strong>"+pct+"%</strong></div>";});}
          // Committee interest - show names per committee
-          var committees=["Membership, Networking & Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"];
+          var committees=["Nominating","Program and Awards","Membership and Engagement","Not at this time"];
           var committeeNames={};
           committees.forEach(function(c){committeeNames[c]=[];});
           responses.forEach(function(r){
@@ -1296,19 +1295,17 @@ POLLS.forEach(function(poll){
           var top=rc.indexOf(Math.max.apply(null,rc));
           var uc=[0,0,0];responses.forEach(function(r){if(r.usage!==undefined)uc[r.usage]++;});
           var takeaways=responses.filter(function(r){return r.takeaway;}).map(function(r){return r.takeaway;});
-          var topLabel=RATING_OPTS[top];
+          var topLabel=LIKERT[top];
           var topPct=responses.length?Math.round((rc[top]/responses.length)*100):0;
-          html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top rating: "+RATING_EMOJIS[top]+" "+topLabel+" ("+topPct+"% of respondents)</div>";
+          html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top response: "+LIKERT_E[top]+" "+topLabel+" ("+topPct+"% of respondents)</div>";
+          html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;'>This session was a valuable use of my time.</div>";
           html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
-          RATING_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+RATING_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span></div>";});
+          LIKERT.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span></div>";});
           html+="</div>";
-          html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>Use in next 30 days?</div>";
+          html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;'>I will use something from this session in the next 30 days.</div>";
           html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
-          USAGE_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+USAGE_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
+          LIKERT.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
           html+="</div>";
-          if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
-        }
-        html+="</div>";
       });
     }
     el.innerHTML=html;

@@ -28,8 +28,16 @@ const RATING_OPTS=["Fire","Solid","Got one idea","Missed the mark"];
 const RATING_EMOJIS=["&#128293;","&#128077;","&#128161;","&#128528;"];
 const USAGE_OPTS=["Yes","Maybe","No"];
 const USAGE_EMOJIS=["&#9989;","&#129300;","&#10060;"];
-const CONF_OPTS=["Definitely","Probably","Not sure"];
-const CONF_EMOJIS=["&#128588;","&#128077;","&#129300;"];
+const CONF_OPTS=["Strongly Agree","Agree","Neither","Disagree","Strongly Disagree"];
+const CONF_EMOJIS=["&#11088;","&#128077;","&#128528;","&#128078;","&#10060;"];
+const LIKERT=["Strongly Agree","Agree","Neither agree nor disagree","Disagree","Strongly Disagree"];
+const LIKERT_E=["&#11088;","&#128077;","&#128528;","&#128078;","&#10060;"];
+const ABOVE_AVG=["Above average","Average","Below average"];
+const ABOVE_AVG_E=["&#128293;","&#128077;","&#128528;"];
+const INFORMATIVE=["Highly informative","Informative","Not informative"];
+const INFORMATIVE_E=["&#128293;","&#128077;","&#128528;"];
+const ENGAGING=["Extremely engaging","Very engaging","Somewhat engaging","Not so engaging","Not at all engaging"];
+const ENGAGING_E=["&#127775;","&#128293;","&#128077;","&#128528;","&#10060;"];
 
 const ROUND_SECS=15*60,ADMIN_PASS="kahcc2026";
 const ROUNDS=[
@@ -251,16 +259,66 @@ function showPoll(pid){
 function buildPollFormHTML(pid,poll){
   var isConf=pid==="conference";
   var html="<div class='poll-banner'><h3>&#128203; "+esc(poll.label)+"</h3><p>Your feedback goes straight to the KAHCC board!</p></div>";
-  html+="<div class='poll-card'><div class='poll-q'>Overall rating</div><div class='poll-opts' id='po-rating'>";
-  RATING_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+RATING_EMOJIS[i]+" "+o+"</div>";});
-  html+="</div></div>";
-  var q2opts=isConf?CONF_OPTS:USAGE_OPTS;var q2emojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
-  var q2lbl=isConf?"Would you recommend KAHCC membership to a colleague?":"Will you use something from this session in the next 30 days?";
-  html+="<div class='poll-card'><div class='poll-q'>"+q2lbl+"</div><div class='poll-opts' id='po-usage'>";
-  q2opts.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+q2emojis[i]+" "+o+"</div>";});
-  html+="</div></div>";
-  if(isConf){html+="<div class='poll-card'><div class='poll-q'>What topic would you most like at the next conference?</div><textarea class='poll-textarea' id='po-topic' placeholder='Your suggestion...'></textarea></div>";}
-  html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
+
+  if(isConf){
+    // Q1-5 Likert
+    var likertQs=[
+      "This educational conference was well planned and organized.",
+      "This conference gave me skills and techniques directly applicable to my career.",
+      "I had an opportunity to meet with and learn from other participants.",
+      "The meeting facilities were conducive to learning.",
+      "I would likely attend or recommend this conference in the future."
+    ];
+    likertQs.forEach(function(q,qi){
+      html+="<div class='poll-card'><div class='poll-q'>"+q+"</div><div class='poll-opts' id='po-likert"+qi+"'>";
+      LIKERT.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('likert"+qi+"',"+i+")\">"+LIKERT_E[i]+" "+o+"</div>";});
+      html+="</div></div>";
+    });
+    // Q6 Museum Mixer
+    html+="<div class='poll-card'><div class='poll-q'>Rate Museum Mixer - A Social Safari</div><div class='poll-opts' id='po-mixer'>";
+    ABOVE_AVG.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('mixer',"+i+")\">"+ABOVE_AVG_E[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    // Q7 Membership Meeting
+    html+="<div class='poll-card'><div class='poll-q'>Rate the KAHCC Membership Meeting</div><div class='poll-opts' id='po-member'>";
+    INFORMATIVE.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('member',"+i+")\">"+INFORMATIVE_E[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    // Q8 KHA Advocacy
+    html+="<div class='poll-card'><div class='poll-q'>Rate the KHA Advocacy Update</div><div class='poll-opts' id='po-kha'>";
+    INFORMATIVE.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('kha',"+i+")\">"+INFORMATIVE_E[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    // Q9 Emerald Awards
+    html+="<div class='poll-card'><div class='poll-q'>Rate the Emerald Awards Presentation and Luncheon</div><div class='poll-opts' id='po-emerald'>";
+    ENGAGING.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('emerald',"+i+")\">"+ENGAGING_E[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    // Q10 Future topics
+    html+="<div class='poll-card'><div class='poll-q'>What topics would you like to see in future sessions?</div>";
+    html+="<input class='poll-textarea' id='po-topic1' placeholder='First choice...' style='width:100%;border:2px solid var(--border);border-radius:10px;padding:9px 11px;font-family:Barlow,sans-serif;font-size:13px;margin-bottom:7px;display:block;' />";
+    html+="<input class='poll-textarea' id='po-topic2' placeholder='Second choice...' style='width:100%;border:2px solid var(--border);border-radius:10px;padding:9px 11px;font-family:Barlow,sans-serif;font-size:13px;margin-bottom:7px;display:block;' />";
+    html+="<input class='poll-textarea' id='po-topic3' placeholder='Third choice...' style='width:100%;border:2px solid var(--border);border-radius:10px;padding:9px 11px;font-family:Barlow,sans-serif;font-size:13px;display:block;' />";
+    html+="</div>";
+    // Q11 Additional comments
+    html+="<div class='poll-card'><div class='poll-q'>Additional comments about this year's conference?</div><textarea class='poll-textarea' id='po-comments' placeholder='Your thoughts...'></textarea></div>";
+    // Q12 Committee interest
+    html+="<div class='poll-card'><div class='poll-q'>Would you be interested in serving on a KAHCC committee?</div><div class='poll-opts' id='po-committee'>";
+    ["Membership, Networking &amp; Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"].forEach(function(o,i){
+      html+="<div class='poll-opt' onclick=\"APP.selPollMulti('committee',"+i+")\" id='poc_"+i+"'>"+o+"</div>";
+    });
+    html+="</div></div>";
+    // Q13 Board interest
+    html+="<div class='poll-card'><div class='poll-q'>Would you be interested in serving on the KAHCC Board?</div><div class='poll-opts' id='po-board'>";
+    ["Yes","No"].forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('board',"+i+")\">"+o+"</div>";});
+    html+="</div>";
+    html+="<textarea class='poll-textarea' id='po-boardinfo' placeholder='If yes, your name, organization and email...'></textarea>";
+    html+="</div>";
+  }else{
+    html+="<div class='poll-card'><div class='poll-q'>Overall rating</div><div class='poll-opts' id='po-rating'>";
+    RATING_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('rating',"+i+")\">"+RATING_EMOJIS[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    html+="<div class='poll-card'><div class='poll-q'>Will you use something from this session in the next 30 days?</div><div class='poll-opts' id='po-usage'>";
+    USAGE_OPTS.forEach(function(o,i){html+="<div class='poll-opt' onclick=\"APP.selPoll('usage',"+i+")\">"+USAGE_EMOJIS[i]+" "+o+"</div>";});
+    html+="</div></div>";
+    html+="<div class='poll-card'><div class='poll-q'>What was your biggest takeaway?</div><textarea class='poll-textarea' id='po-takeaway' placeholder='Share your biggest insight...'></textarea></div>";
+  }
   html+="<button class='poll-submit' onclick=\"APP.submitPoll('"+pid+"')\">Submit Feedback &#8250;</button>";
   return html;
 }
@@ -299,15 +357,55 @@ function selPoll(group,idx){
   opts.forEach(function(o,i){o.className="poll-opt"+(i===idx?" sel":"");});
 }
 
+function selPollMulti(group,idx){
+  window._pollSel=window._pollSel||{};
+  window._pollSel[group]=window._pollSel[group]||[];
+  var arr=window._pollSel[group];
+  var pos=arr.indexOf(idx);
+  var el=document.getElementById("poc_"+idx);
+  if(pos>-1){
+    arr.splice(pos,1);
+    if(el)el.className="poll-opt";
+  }else{
+    arr.push(idx);
+    if(el)el.className="poll-opt sel";
+  }
+}
+
 function submitPoll(pollId){
   if(!CU)return;
   window._pollSel=window._pollSel||{};
-  if(window._pollSel["rating"]===undefined||window._pollSel["usage"]===undefined){showToast("Please answer all questions!");return;}
-  var takeaway=document.getElementById("po-takeaway")?document.getElementById("po-takeaway").value.trim():"";
-  var topic=document.getElementById("po-topic")?document.getElementById("po-topic").value.trim():"";
-  var data={rating:window._pollSel["rating"],usage:window._pollSel["usage"],takeaway:takeaway,name:CUD?CUD.name:"Attendee",ts:Date.now()};
-  if(topic)data.topic=topic;
-  set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
+  var isConf=pollId==="conference";
+  if(isConf){
+    // Require at least Q1
+    if(window._pollSel["likert0"]===undefined){showToast("Please answer at least the first question!");return;}
+    var committees=["Membership, Networking & Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"];
+    var data={
+      name:CUD?CUD.name:"Attendee",ts:Date.now(),
+      likert0:window._pollSel["likert0"],
+      likert1:window._pollSel["likert1"],
+      likert2:window._pollSel["likert2"],
+      likert3:window._pollSel["likert3"],
+      likert4:window._pollSel["likert4"],
+      mixer:window._pollSel["mixer"],
+      member:window._pollSel["member"],
+      khaRating:window._pollSel["kha"],
+      emeraldRating:window._pollSel["emerald"],
+      board:window._pollSel["board"],
+      topic1:document.getElementById("po-topic1")?document.getElementById("po-topic1").value.trim():"",
+      topic2:document.getElementById("po-topic2")?document.getElementById("po-topic2").value.trim():"",
+      topic3:document.getElementById("po-topic3")?document.getElementById("po-topic3").value.trim():"",
+      comments:document.getElementById("po-comments")?document.getElementById("po-comments").value.trim():"",
+      boardInfo:document.getElementById("po-boardinfo")?document.getElementById("po-boardinfo").value.trim():"",
+      committeeInterest:(window._pollSel["committee"]||[]).map(function(i){return committees[i];})
+    };
+    set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
+  }else{
+    if(window._pollSel["rating"]===undefined||window._pollSel["usage"]===undefined){showToast("Please answer all questions!");return;}
+    var takeaway=document.getElementById("po-takeaway")?document.getElementById("po-takeaway").value.trim():"";
+    var data={rating:window._pollSel["rating"],usage:window._pollSel["usage"],takeaway:takeaway,name:CUD?CUD.name:"Attendee",ts:Date.now()};
+    set(ref(db,"pollResponses/"+pollId+"/"+CU.uid),data);
+  }
   var el=document.getElementById("pollModalBody");
   if(el)el.innerHTML="<div style='padding:30px 20px;text-align:center;'><div style='font-size:48px;margin-bottom:12px;'>&#9989;</div><div class='poll-done'>Thank you! Your feedback has been submitted to the board.</div></div>";
   showToast("Feedback submitted!");

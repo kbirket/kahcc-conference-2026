@@ -421,6 +421,7 @@ function renderPollControls(){
     html+="<button class='adm-btn adm-green' style='font-size:10px;padding:3px 7px;' onclick=\"APP.activatePoll('"+p.id+"')\">&#9654; Open</button>";
     html+="<button class='adm-btn adm-red' style='font-size:10px;padding:3px 7px;' onclick='APP.closePollAdmin()'>&#9632; Close</button>";
     html+="<button class='adm-btn adm-blue' style='font-size:10px;padding:3px 7px;' onclick=\"APP.revealPoll('"+p.id+"')\">&#128065; Reveal</button>";
+    html+="<button class='adm-btn' style='font-size:10px;padding:3px 7px;background:#888;color:#fff;' onclick=\"APP.previewPoll('"+p.id+"')\">&#128064; Preview</button>";
     html+="</div></div>";
   });
   el.innerHTML=html;
@@ -1173,6 +1174,22 @@ function renderWateringHole(){
   });
 }
 initNightSafari();
+function previewPoll(pid){
+  var poll=POLLS.find(function(p){return p.id===pid;});if(!poll)return;
+  // Temporarily clear any saved response so form shows fresh
+  var savedSel=window._pollSel;
+  window._pollSel={};
+  openPollModal(buildPollFormHTML(pid,poll));
+  // Override submit to just close without saving
+  var el=document.getElementById("pollModalBody");
+  if(el){
+    var btn=el.querySelector(".poll-submit");
+    if(btn){
+      btn.textContent="Close Preview";
+      btn.onclick=function(){closePollModal();window._pollSel=savedSel||{};};
+    }
+  }
+}
 function renderDashboard(){
   var el=document.getElementById("dashContent");if(!el)return;
   el.innerHTML="<div class='feed-empty'>Loading...</div>";
@@ -1510,6 +1527,7 @@ window.APP={
   emailConnections:emailConnections,
   uploadHunt:uploadHunt,
   exportPDF:exportPDF,
+  previewPoll:previewPoll,
   renderDashboard:renderDashboard,
   submitQuestion:submitQuestion,
   replyQuestion:replyQuestion,

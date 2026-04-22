@@ -244,10 +244,12 @@ function checkActivePoll(){
   });
 }
 onValue(ref(db,"activePoll"),function(){checkActivePoll();});
-
 function showPoll(pid){
   var poll=POLLS.find(function(p){return p.id===pid;});if(!poll)return;
-  if(!CU){openPollModal("<div style='padding:20px;text-align:center;font-size:13px;color:#666;'>Please sign in to rate sessions!</div>");return;}
+  if(!CU&&pid==="conference"){
+    openPollModal("<div style='padding:20px;text-align:center;'><div style='font-size:36px;margin-bottom:12px;'>&#128221;</div><div style='font-size:14px;font-weight:700;color:var(--purple);margin-bottom:8px;'>Sign In Required</div><div style='font-size:13px;color:#666;line-height:1.6;'>The Conference at Large survey includes questions about board and committee interest, so we need to know who you are!<br><br>Please sign in with Google at the top of the app, then come back to complete this survey.</div></div>");
+    return;
+  }
   Promise.all([get(ref(db,"pollResponses/"+pid+"/"+CU.uid)),get(ref(db,"revealedPolls/"+pid))]).then(function(res){
     var already=res[0].exists();var revealed=res[1].val()===true;
     if(already||revealed){openPollModal(buildPollResultsHTML(pid,poll,null,revealed));loadPollResultsIntoModal(pid,poll,revealed);return;}

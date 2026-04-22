@@ -303,6 +303,7 @@ function buildPollFormHTML(pid,poll){
     // Q12 Committee interest
     html+="<div class='poll-card'><div class='poll-q'>Would you be interested in serving on a KAHCC committee?</div><div class='poll-opts' id='po-committee'>";
     var committees=["Nominating","Program and Awards","Membership and Engagement","Not at this time"];
+    committees.forEach(function(o,i){
       html+="<div class='poll-opt' onclick=\"APP.selPollMulti('committee',"+i+")\" id='poc_"+i+"'>"+o+"</div>";
     });
     html+="</div></div>";
@@ -1305,6 +1306,7 @@ POLLS.forEach(function(poll){
           html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;'>I will use something from this session in the next 30 days.</div>";
           html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
           LIKERT.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
+          if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
           html+="</div>";
       });
     }

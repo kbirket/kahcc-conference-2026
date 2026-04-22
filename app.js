@@ -1247,15 +1247,42 @@ POLLS.forEach(function(poll){
           var bc=[0,0];responses.forEach(function(r){if(r.board!==undefined)bc[r.board]++;});
           var bt=bc.reduce(function(a,b){return a+b;},0);
           if(bt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Interested in serving on the Board?</div>";["Yes","No"].forEach(function(o,i){var pct=Math.round((bc[i]/bt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+o+": <strong>"+pct+"%</strong></div>";});}
-          // Committee interest
+         // Committee interest - show names per committee
           var committees=["Membership, Networking & Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"];
-          var cc=[0,0,0,0,0];
-          responses.forEach(function(r){if(r.committeeInterest&&r.committeeInterest.length){r.committeeInterest.forEach(function(c){var idx=committees.indexOf(c);if(idx>-1)cc[idx]++;});}});
-          var hasCC=cc.some(function(v){return v>0;});
-          if(hasCC){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Committee Interest</div>";committees.forEach(function(o,i){if(cc[i]>0)html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>&#8250; "+o+": <strong>"+cc[i]+"</strong></div>";});}
-          // Board info & comments
-          var boardInfos=responses.filter(function(r){return r.boardInfo;}).map(function(r){return r.name+": "+r.boardInfo;});
-          if(boardInfos.length){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Board Volunteers</div>";boardInfos.forEach(function(t){html+="<div class='takeaway-item'>"+esc(t)+"</div>";});}
+          var committeeNames={};
+          committees.forEach(function(c){committeeNames[c]=[];});
+          responses.forEach(function(r){
+            if(r.committeeInterest&&r.committeeInterest.length){
+              r.committeeInterest.forEach(function(c){
+                if(committeeNames[c]!==undefined&&c!=="Not at this time"){
+                  committeeNames[c].push(r.name||"Attendee");
+                }
+              });
+            }
+          });
+          var hasCC=committees.some(function(c){return c!=="Not at this time"&&committeeNames[c].length>0;});
+          if(hasCC){
+            html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Committee Interest</div>";
+            committees.forEach(function(c){
+              if(c==="Not at this time")return;
+              if(!committeeNames[c].length)return;
+              html+="<div style='background:#f4f0fc;border-radius:6px;padding:6px 9px;margin-bottom:5px;'>";
+              html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:3px;'>&#8250; "+esc(c)+" ("+committeeNames[c].length+")</div>";
+              committeeNames[c].forEach(function(n){html+="<div style='font-size:11px;color:var(--text);padding:1px 0 1px 10px;'>&#9900; "+esc(n)+"</div>";});
+              html+="</div>";
+            });
+          }
+          // Board volunteers - name + their contact info on same line
+          var boardYes=responses.filter(function(r){return r.board===0;});
+          if(boardYes.length){
+            html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Interested in Serving on the Board ("+boardYes.length+")</div>";
+            boardYes.forEach(function(r){
+              html+="<div style='background:#f4f0fc;border-radius:6px;padding:6px 9px;margin-bottom:5px;'>";
+              html+="<div style='font-size:11px;font-weight:700;color:var(--text);'>"+esc(r.name||"Attendee")+"</div>";
+              if(r.boardInfo)html+="<div style='font-size:11px;color:#666;'>"+esc(r.boardInfo)+"</div>";
+              html+="</div>";
+            });
+          }
           // Topics
           var topics=[];responses.forEach(function(r){if(r.topic1)topics.push(r.topic1);if(r.topic2)topics.push(r.topic2);if(r.topic3)topics.push(r.topic3);});
           if(topics.length){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Future Topic Suggestions</div>";topics.slice(0,10).forEach(function(t){html+="<div class='takeaway-item'>&#8250; "+esc(t)+"</div>";});}

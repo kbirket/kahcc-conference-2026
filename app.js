@@ -1196,43 +1196,72 @@ function renderDashboard(){
     }
     if(pollsSnap.exists()){
       html+="<div class='sec-hdr' style='margin-top:4px;'>Session Feedback</div>";
-      POLLS.forEach(function(poll){
+POLLS.forEach(function(poll){
         if(!pollsSnap.hasChild(poll.id))return;
         var responses=[];pollsSnap.child(poll.id).forEach(function(c){responses.push(c.val());});
         if(!responses.length)return;
-        var rc=[0,0,0,0];responses.forEach(function(r){if(r.rating!==undefined)rc[r.rating]++;});
-        var top=rc.indexOf(Math.max.apply(null,rc));
-        var uc=[0,0,0];responses.forEach(function(r){if(r.usage!==undefined)uc[r.usage]++;});
-        var takeaways=responses.filter(function(r){return r.takeaway;}).map(function(r){return r.takeaway;});
         html+="<div class='session-result'><div class='sr-title'>"+esc(poll.label)+" <span style='font-size:10px;color:#888;'>("+responses.length+" responses)</span></div>";
-        // Rating summary
-var topLabel=RATING_OPTS[top];
-var topPct=responses.length?Math.round((rc[top]/responses.length)*100):0;
-html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top rating: "+RATING_EMOJIS[top]+" "+topLabel+" ("+topPct+"% of respondents)</div>";
-html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
-RATING_OPTS.forEach(function(o,i){
-  var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;
-  html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'>";
-  html+="<span style='min-width:110px;color:var(--text);'>"+RATING_EMOJIS[i]+" "+o+"</span>";
-  html+="<div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div>";
-  html+="<span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span>";
-  html+="</div>";
-});
-html+="</div>";
-var isConf=poll.id==="conference";var uOpts=isConf?CONF_OPTS:USAGE_OPTS;var uEmojis=isConf?CONF_EMOJIS:USAGE_EMOJIS;
-var q2lbl=isConf?"Recommend KAHCC?":"Use in next 30 days?";
-html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>"+q2lbl+"</div>";
-html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
-uOpts.forEach(function(o,i){
-  var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;
-  html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'>";
-  html+="<span style='min-width:110px;color:var(--text);'>"+uEmojis[i]+" "+o+"</span>";
-  html+="<div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div>";
-  html+="<span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span>";
-  html+="</div>";
-});
-html+="</div>";
-        if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
+        if(poll.id==="conference"){
+          // Likert questions
+          var likertQs=["Well planned and organized","Applicable skills and techniques","Opportunity to meet and learn from others","Facilities conducive to learning","Would attend or recommend in future"];
+          likertQs.forEach(function(q,qi){
+            var lc=[0,0,0,0,0];responses.forEach(function(r){if(r["likert"+qi]!==undefined)lc[r["likert"+qi]]++;});
+            var total=lc.reduce(function(a,b){return a+b;},0);if(!total)return;
+            html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-bottom:4px;margin-top:8px;'>"+esc(q)+"</div>";
+            LIKERT.forEach(function(o,i){var pct=total?Math.round((lc[i]/total)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:11px;margin-bottom:3px;'><span style='min-width:130px;color:var(--text);'>"+LIKERT_E[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:10px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);font-size:11px;'>"+pct+"%</span></div>";});
+          });
+          // Mixer
+          var mc=[0,0,0];responses.forEach(function(r){if(r.mixer!==undefined)mc[r.mixer]++;});
+          var mt=mc.reduce(function(a,b){return a+b;},0);
+          if(mt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Museum Mixer</div>";ABOVE_AVG.forEach(function(o,i){var pct=Math.round((mc[i]/mt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+ABOVE_AVG_E[i]+" "+o+": <strong>"+pct+"%</strong></div>";});}
+          // Membership meeting
+          var mem=[0,0,0];responses.forEach(function(r){if(r.member!==undefined)mem[r.member]++;});
+          var memt=mem.reduce(function(a,b){return a+b;},0);
+          if(memt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Membership Meeting</div>";INFORMATIVE.forEach(function(o,i){var pct=Math.round((mem[i]/memt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+INFORMATIVE_E[i]+" "+o+": <strong>"+pct+"%</strong></div>";});}
+          // KHA
+          var kc=[0,0,0];responses.forEach(function(r){if(r.khaRating!==undefined)kc[r.khaRating]++;});
+          var kt=kc.reduce(function(a,b){return a+b;},0);
+          if(kt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>KHA Advocacy Update</div>";INFORMATIVE.forEach(function(o,i){var pct=Math.round((kc[i]/kt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+INFORMATIVE_E[i]+" "+o+": <strong>"+pct+"%</strong></div>";});}
+          // Emerald
+          var ec=[0,0,0,0,0];responses.forEach(function(r){if(r.emeraldRating!==undefined)ec[r.emeraldRating]++;});
+          var et=ec.reduce(function(a,b){return a+b;},0);
+          if(et){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Emerald Awards Luncheon</div>";ENGAGING.forEach(function(o,i){var pct=Math.round((ec[i]/et)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+ENGAGING_E[i]+" "+o+": <strong>"+pct+"%</strong></div>";});}
+          // Board interest
+          var bc=[0,0];responses.forEach(function(r){if(r.board!==undefined)bc[r.board]++;});
+          var bt=bc.reduce(function(a,b){return a+b;},0);
+          if(bt){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Interested in serving on the Board?</div>";["Yes","No"].forEach(function(o,i){var pct=Math.round((bc[i]/bt)*100);html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>"+o+": <strong>"+pct+"%</strong></div>";});}
+          // Committee interest
+          var committees=["Membership, Networking & Social Media","Education and Conferences","Emeralds","Nominating","Not at this time"];
+          var cc=[0,0,0,0,0];
+          responses.forEach(function(r){if(r.committeeInterest&&r.committeeInterest.length){r.committeeInterest.forEach(function(c){var idx=committees.indexOf(c);if(idx>-1)cc[idx]++;});}});
+          var hasCC=cc.some(function(v){return v>0;});
+          if(hasCC){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Committee Interest</div>";committees.forEach(function(o,i){if(cc[i]>0)html+="<div style='font-size:11px;color:var(--text);padding:2px 0;'>&#8250; "+o+": <strong>"+cc[i]+"</strong></div>";});}
+          // Board info & comments
+          var boardInfos=responses.filter(function(r){return r.boardInfo;}).map(function(r){return r.name+": "+r.boardInfo;});
+          if(boardInfos.length){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Board Volunteers</div>";boardInfos.forEach(function(t){html+="<div class='takeaway-item'>"+esc(t)+"</div>";});}
+          // Topics
+          var topics=[];responses.forEach(function(r){if(r.topic1)topics.push(r.topic1);if(r.topic2)topics.push(r.topic2);if(r.topic3)topics.push(r.topic3);});
+          if(topics.length){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Future Topic Suggestions</div>";topics.slice(0,10).forEach(function(t){html+="<div class='takeaway-item'>&#8250; "+esc(t)+"</div>";});}
+          // Comments
+          var comments=responses.filter(function(r){return r.comments;}).map(function(r){return r.comments;});
+          if(comments.length){html+="<div style='font-size:11px;font-weight:700;color:var(--purple);margin-top:8px;margin-bottom:4px;'>Additional Comments</div>";comments.forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
+        }else{
+          var rc=[0,0,0,0];responses.forEach(function(r){if(r.rating!==undefined)rc[r.rating]++;});
+          var top=rc.indexOf(Math.max.apply(null,rc));
+          var uc=[0,0,0];responses.forEach(function(r){if(r.usage!==undefined)uc[r.usage]++;});
+          var takeaways=responses.filter(function(r){return r.takeaway;}).map(function(r){return r.takeaway;});
+          var topLabel=RATING_OPTS[top];
+          var topPct=responses.length?Math.round((rc[top]/responses.length)*100):0;
+          html+="<div style='font-size:12px;color:var(--easy);font-weight:700;margin-bottom:8px;'>&#9989; Top rating: "+RATING_EMOJIS[top]+" "+topLabel+" ("+topPct+"% of respondents)</div>";
+          html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
+          RATING_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((rc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+RATING_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--purple);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--purple);'>"+pct+"%</span></div>";});
+          html+="</div>";
+          html+="<div style='font-size:11px;font-weight:700;color:#888;text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px;'>Use in next 30 days?</div>";
+          html+="<div style='display:flex;flex-direction:column;gap:5px;margin-bottom:10px;'>";
+          USAGE_OPTS.forEach(function(o,i){var pct=responses.length?Math.round((uc[i]/responses.length)*100):0;html+="<div style='display:flex;align-items:center;gap:8px;font-size:12px;'><span style='min-width:110px;color:var(--text);'>"+USAGE_EMOJIS[i]+" "+o+"</span><div style='flex:1;background:#e8e0f4;border-radius:6px;height:12px;overflow:hidden;'><div style='height:100%;background:var(--orange);border-radius:6px;width:"+pct+"%;'></div></div><span style='min-width:32px;text-align:right;font-weight:700;color:var(--orange);'>"+pct+"%</span></div>";});
+          html+="</div>";
+          if(takeaways.length){takeaways.slice(0,3).forEach(function(t){html+="<div class='takeaway-item'>&#8220;"+esc(t)+"&#8221;</div>";});}
+        }
         html+="</div>";
       });
     }
@@ -1444,54 +1473,54 @@ function initLiveMap() {
 
 // THE FINAL BRAIN - MUST BE AT THE VERY BOTTOM
 // --- THE FULL, UNCUT APP BRAIN ---
-window.APP = {
-  signIn: function() { signInWithPopup(auth, provider).catch(function(e) { showToast("Sign in failed: " + e.message); }); },
-  signOut: function() { signOut(auth); },
-  switchTab: switchTab,
-  openModal: openModal,
-  closeModal: closeModal,
-  closeModalOutside: closeModalOutside,
-  showPoll: showPoll,
-  selPoll: selPoll,
-  submitPoll: submitPoll,
-  closePollModal: closePollModal,
-  closePollModalOutside: closePollModalOutside,
-  toggleAdminSection: toggleAdminSection,
-  unlockAdmin: unlockAdmin,
-  adminStartGame: adminStartGame,
-  adminNextRound: adminNextRound,
-  adminResetGame: adminResetGame,
-  clearAllTestData: clearAllTestData,
-  activatePoll: activatePoll,
-  closePollAdmin: closePollAdmin,
-  revealPoll: revealPoll,
-  answerQ: answerQ,
-  switchFeed: switchFeed,
-  submitPost: submitPost,
-  doReact: doReact,
-  doReply: doReply,
-  approveHunt: approveHunt,
-  toggleCardEdit: toggleCardEdit,
-  saveMyCard: saveMyCard,
-  uploadProfilePic: uploadProfilePic,
-  searchAttendees: searchAttendees,
-  doConnect: doConnect,
-  downloadConnections: downloadConnections,
-  emailConnections: emailConnections,
-  uploadHunt: uploadHunt,
-  exportPDF: exportPDF,
-renderDashboard:renderDashboard,
+window.APP={
+  signIn:function(){signInWithPopup(auth,provider).catch(function(e){showToast("Sign in failed: "+e.message);});},
+  signOut:function(){signOut(auth);},
+  switchTab:switchTab,
+  openModal:openModal,
+  closeModal:closeModal,
+  closeModalOutside:closeModalOutside,
+  showPoll:showPoll,
+  selPoll:selPoll,
+  selPollMulti:selPollMulti,
+  submitPoll:submitPoll,
+  closePollModal:closePollModal,
+  closePollModalOutside:closePollModalOutside,
+  toggleAdminSection:toggleAdminSection,
+  unlockAdmin:unlockAdmin,
+  adminStartGame:adminStartGame,
+  adminNextRound:adminNextRound,
+  adminResetGame:adminResetGame,
+  clearAllTestData:clearAllTestData,
+  activatePoll:activatePoll,
+  closePollAdmin:closePollAdmin,
+  revealPoll:revealPoll,
+  answerQ:answerQ,
+  switchFeed:switchFeed,
+  submitPost:submitPost,
+  doReact:doReact,
+  doReply:doReply,
+  approveHunt:approveHunt,
+  toggleCardEdit:toggleCardEdit,
+  saveMyCard:saveMyCard,
+  uploadProfilePic:uploadProfilePic,
+  searchAttendees:searchAttendees,
+  doConnect:doConnect,
+  downloadConnections:downloadConnections,
+  emailConnections:emailConnections,
+  uploadHunt:uploadHunt,
+  exportPDF:exportPDF,
+  renderDashboard:renderDashboard,
   submitQuestion:submitQuestion,
   replyQuestion:replyQuestion,
+  toggleNightMode:toggleNightMode,
+  submitMyLocation:submitMyLocation,
+  initLiveMap:initLiveMap,
   showWateringHolePrompt:showWateringHolePrompt,
   whToggle:whToggle,
   whSave:whSave,
   whSkip:whSkip,
-  renderWateringHole:renderWateringHole,
-  toggleNightMode: toggleNightMode,
-  submitMyLocation: submitMyLocation,
-  initLiveMap: initLiveMap
+  renderWateringHole:renderWateringHole
 };
 
-// Mobile Tab Safety Net
-window.switchTab = switchTab;
+window.switchTab=switchTab;

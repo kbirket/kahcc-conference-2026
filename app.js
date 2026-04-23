@@ -863,7 +863,7 @@ function loadAllAttendees(){
       var org=a.card&&a.card.fields&&a.card.fields.find(function(f){return f.label.toLowerCase().includes("org");});
       var opt=document.createElement("option");
       opt.value=i;
-      opt.textContent=(a.animal||"")+" "+a.name+(org?" — "+org.value:"");
+      opt.textContent=a.name+(org?" — "+org.value:"");
       sel.appendChild(opt);
     });
   });

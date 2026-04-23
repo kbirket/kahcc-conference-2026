@@ -650,7 +650,7 @@ body.night-safari .app-header::before {
     </div>
     <div class="card">
       <div class="card-hdr"><span class="chi">&#128269;</span><h3>Find Attendees</h3></div>      <div class="card-body">
-        <input class="srch-box" type="text" id="attendeeSearch" placeholder="Search by name..." oninput="APP.searchAttendees()" />
+        <select id="attendeeSearch" onchange="APP.searchAttendees()" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:10px;font-family:'Barlow',sans-serif;font-size:13px;color:var(--text);background:#fff;margin-bottom:11px;">           <option value="">-- Select an attendee --</option>         </select>
         <div id="attendeeResults"></div>
       </div>
     </div>

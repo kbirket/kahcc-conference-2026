@@ -155,7 +155,7 @@ function switchTab(name){
   if(map[name]!==undefined)document.querySelectorAll(".nav-tab")[map[name]].classList.add("active");
   if(name==="trivia")renderTriviaGame();
   if(name==="community")loadFeed(curFeed);
-  if(name==="connect"){renderMyCard();renderConnections();renderWateringHole();}
+  if(name==="connect"){renderMyCard();renderConnections();renderWateringHole();loadAllAttendees();}
   if(name==="hunt")renderHunt();
   if(name==="schedule")checkActivePoll();
   if(name==="dashboard")renderDashboard();
@@ -850,21 +850,45 @@ function saveMyCard() {
     renderMyCard();
     showToast("Card saved!");
 }
+var _allAttendees=null;
+function loadAllAttendees(){
+  if(_allAttendees)return;
+  get(ref(db,"users")).then(function(snap){
+    if(!snap.exists())return;
+    _allAttendees=[];
+    snap.forEach(function(c){var d=c.val();if(d.name)_allAttendees.push(d);});
+  });
+}
 function searchAttendees(){
   var q=document.getElementById("attendeeSearch").value.trim().toLowerCase();
   var el=document.getElementById("attendeeResults");if(!el)return;
-  if(q.length<2){el.innerHTML="";return;}
-  get(ref(db,"users")).then(function(snap){
-    if(!snap.exists()){el.innerHTML="<div class='feed-empty'>No attendees found.</div>";return;}
-    var results=[];
-    snap.forEach(function(c){var d=c.val();if(d.name&&d.name.toLowerCase().includes(q)&&(!CU||d.uid!==CU.uid))results.push(d);});
-    if(!results.length){el.innerHTML="<div class='feed-empty'>No attendees found.</div>";return;}
-    el.innerHTML=results.slice(0,10).map(function(a){
+  if(q.length<1){el.innerHTML="";return;}
+  if(!_allAttendees){
+    get(ref(db,"users")).then(function(snap){
+      _allAttendees=[];
+      if(snap.exists())snap.forEach(function(c){var d=c.val();if(d.name)_allAttendees.push(d);});
+      renderAttendeeDropdown(q,el);
+    });
+    return;
+  }
+  renderAttendeeDropdown(q,el);
+}
+function renderAttendeeDropdown(q,el){
+  var results=_allAttendees.filter(function(d){return d.name&&d.name.toLowerCase().includes(q)&&(!CU||d.uid!==CU.uid);});
+  if(!results.length){el.innerHTML="<div style='background:#fff;border-radius:10px;padding:10px;font-size:12px;color:#999;text-align:center;box-shadow:0 4px 12px rgba(74,32,128,.12);'>No attendees found</div>";return;}
+  el.style.position="relative";
+  el.innerHTML="<div style='background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 4px 16px rgba(74,32,128,.15);border:1px solid var(--border);'>"+
+    results.slice(0,8).map(function(a){
       var org=a.card&&a.card.fields&&a.card.fields.find(function(f){return f.label.toLowerCase().includes("org");});
       var iC=myConns&&myConns[a.uid];
-      return"<div class='att-card'><div class='att-animal'>"+(a.animal||"&#128062;")+"</div><div class='att-info'><div class='att-name'>"+esc(a.name||"Attendee")+"</div><div class='att-org'>"+(org?esc(org.value):"")+"</div></div><button class='conn-btn"+(iC?" connected":"")+"' onclick=\"APP.doConnect('"+a.uid+"')\">"+(iC?"&#9989; Connected":"Connect")+"</button></div>";
-    }).join("");
-  });
+      return"<div class='att-card' style='border-radius:0;border-bottom:1px solid var(--border);margin:0;'>"+
+        "<div class='att-animal'>"+(a.animal||"&#128062;")+"</div>"+
+        "<div class='att-info'><div class='att-name'>"+esc(a.name||"Attendee")+"</div>"+
+        "<div class='att-org'>"+(org?esc(org.value):"")+"</div></div>"+
+        "<button class='conn-btn"+(iC?" connected":"")+"' onclick=\"APP.doConnect('"+a.uid+"')\">"+(iC?"&#9989;":"Connect")+"</button>"+
+      "</div>";
+    }).join("")+
+  "</div>";
 }
 function doConnect(uid){
   if(!CU){showToast("Sign in to connect!");return;}

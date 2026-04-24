@@ -436,7 +436,7 @@ function revealPoll(pid){set(ref(db,"revealedPolls/"+pid),true);showToast("Resul
 // TRIVIA
 function renderTriviaGame(){
   var el=document.getElementById("triviaGame");if(!el)return;
-  if(triviaUnsub){triviaUnsub();triviaUnsub=null;}
+  if(triviaUnsub)return;
   triviaUnsub=onValue(ref(db,"gameState"),function(snap){
     var gs=snap.val()||{started:false,gameOver:false,currentRound:-1,timeRemaining:ROUND_SECS};
     renderTriviaUI(gs);
@@ -1323,6 +1323,25 @@ POLLS.forEach(function(poll){
         }
         html+="</div>";
       });
+    }
+   // Hunt Photo Gallery
+    if(huntSnap.exists()){
+      var photos=[];
+      huntSnap.forEach(function(uSnap){uSnap.forEach(function(cSnap){var d=cSnap.val();if(d&&d.url&&d.approved)photos.push(d);});});
+      if(photos.length){
+        html+="<div class='sec-hdr' style='margin-top:4px;'>AI-nimal Selfie Gallery</div>";
+        html+="<div style='display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:13px;'>";
+        photos.sort(function(a,b){return(b.ts||0)-(a.ts||0);});
+        photos.forEach(function(p){
+          html+="<div style='border-radius:10px;overflow:hidden;aspect-ratio:1;position:relative;background:var(--gray);'>";
+          html+="<img src='"+p.url+"' style='width:100%;height:100%;object-fit:cover;' loading='lazy' />";
+          html+="<div style='position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.7));padding:5px 7px;'>";
+          html+="<div style='font-size:9px;color:#fff;font-weight:700;'>"+esc(p.name||"")+"</div>";
+          html+="<div style='font-size:8px;color:rgba(255,255,255,.7);'>"+esc(p.chTitle||"")+"</div>";
+          html+="</div></div>";
+        });
+        html+="</div>";
+      }
     }
     el.innerHTML=html;
   });
